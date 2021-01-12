@@ -15,7 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from backend.Views.manager_view import ManagerView
+
+managerView = ManagerView()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path("manager/signup/", managerView.signUp),
 ]
