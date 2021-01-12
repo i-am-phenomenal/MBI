@@ -50,3 +50,20 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
     @property
     def is_active(self):
         return self.isActive
+
+class Product(models.Model):
+    id = models.CharField(max_length=100, db_column="product_id", primary_key=True, editable=False)
+    productName = models.CharField(max_length=50, db_column="product_name")
+    insertedAt = models.DateTimeField(db_column="inserted_at")
+    updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
+
+class Price(models.Model):
+    id = models.CharField(max_length=100, primary_key=True, editable=False)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    currency = models.CharField(max_length=10)
+    unitAmount = models.IntegerField(default=0, db_column="unit_amount")
+    billingScheme = models.CharField(max_length=20, default="per_unit", db_column="billing_scheme")
+    interval = models.CharField(max_length=10, default="month")
+    intervalCount = models.IntegerField(default=1, db_column="interval_count")
+    insertedAt = models.DateTimeField(db_column="inserted_at")
+    updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")

@@ -1,5 +1,5 @@
 from . import helpers
-from .models import Manager
+from .models import *
 from django.contrib.auth.hashers import check_password
 
 def validateRequestContentType(function):
@@ -66,4 +66,41 @@ def checkIfValidCreds(function):
         successCondition = check_password(params["password"], getManager(params["emailId"]).password)
         resp = function(self, request) if successCondition else helpers.getBadResponse("Invalid Credentials.", 400)
         return resp
+    return innerFunction
+
+def validateIfProductNamePresent(function):
+    def innerFunction(self, request): 
+        params = helpers.getRequestParams(request)
+        resp = function(self, request) if "name" in params else helpers.getBadResponse("Bad request. Product name not present", 400)
+        return resp
+    return innerFunction
+
+def validateIfProductNameAlreadyPresent(function):
+    def innerFunction(self, request):
+        params = helpers.getRequestParams(request)
+        getProductByName = lambda name: Product.objects.filter(productName=name).exists()
+        resp = function(self, request) if not getProductByName(params["name"]) else helpers.getBadResponse("Product with the given name already exists", 400)
+        return resp
+    return innerFunction
+
+
+def validateMandatoryFieldsForPrice(function):
+    def innerFunction(self, request): 
+        params = helpers.getRequestParams(request)
+        successCondition = "productId" in params and "currency" in params and "unitAmount" in params
+        resp = function(self, request) if successCondition else helpers.getBadResponse("Bad request. One or more fields are missing", 400)
+        return resp
+    return innerFunction
+
+def checkIfProductIdExists(function): 
+    def innerFunction(self, request): 
+        params = helpers.getRequestParams(request)
+        getProductById = lambda id: Product.objects.filter(id=id).exists()
+        resp = function(self, request) if not getProductById(params["productId"]) else helpers.getBadResponse("Product with the Id does not exist", 400)
+        return resp
+    return innerFunction
+
+def checkIfGETMethod(function):
+    def innerFunction(self, request):
+        return function(self, request) if request.method == "GET" else helpers.getBadResponse("Invalid request method", 400)
     return innerFunction
