@@ -1,5 +1,6 @@
 from . import helpers
 from .models import Manager
+from django.contrib.auth.hashers import check_password
 
 def validateRequestContentType(function):
     def innerFunction(self, request):
@@ -34,4 +35,35 @@ def validatePassword(function):
         successCondition = (validatePasswordLength(password) and validateIfUpperCaseLetterPresent(password) and validateIfSpecialCharacterPresent(password))
         response = function(self, request) if successCondition else helpers.getBadResponse("Password must contain atleast 8 characters and one upper case letter and one special character", 400)
         return response
+    return innerFunction
+
+def validateFieldsForLogin(function): 
+    def innerFunction(self, request):
+        params = helpers.getRequestParams(request)
+        successCondition = "emailId" in params and "password" in params
+        resp = function(self, request) if successCondition else helpers.getBadResponse("Bad request. One or more important fields are missing", 400)
+        return resp
+    return innerFunction
+
+def checkIfEmailPresent(function): 
+    def innerFunction(self, request): 
+        params = helpers.getRequestParams(request)
+        getUserByEmailId = lambda emailId: Manager.objects.filter(emailId=emailId).exists()
+        resp = function(self, request) if getUserByEmailId(params["emailId"]) else helpers.getBadResponse("User with the given email id does not exist", 400)
+        return resp
+    return innerFunction
+
+def validateHttpMethod(function): 
+    def innerFunction(self, request): 
+        resp = function(self, request) if request.method == "POST" else helpers.getBadResponse("Bad request. Invalid HTTP request method", 400)
+        return resp
+    return innerFunction
+
+def checkIfValidCreds(function): 
+    def innerFunction(self, request): 
+        params = helpers.getRequestParams(request)
+        getManager = lambda emailId: Manager.objects.get(emailId=emailId)
+        successCondition = check_password(params["password"], getManager(params["emailId"]).password)
+        resp = function(self, request) if successCondition else helpers.getBadResponse("Invalid Credentials.", 400)
+        return resp
     return innerFunction

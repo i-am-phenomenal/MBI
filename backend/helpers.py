@@ -21,3 +21,13 @@ def getRequestParams(requestObject):
 def convertStrtoDate(dateStr): 
     formatted = datetime.strptime(dateStr, "%d/%m/%Y").date()
     return formatted
+
+def getManagetDict(converted, message): 
+    return {
+        "uuid": str(converted["uuid"]),
+        "emailId": converted["emailId"],
+        "company" : converted["company"],
+        "firstName": converted["firstName"],
+        "lastName": converted["lastName"],
+        "message": message
+    }

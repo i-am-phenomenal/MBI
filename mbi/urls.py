@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path("manager/signup/", managerView.signUp),
+    path("manager/login/", managerView.login),
 ]
