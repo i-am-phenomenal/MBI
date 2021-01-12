@@ -9,7 +9,7 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
     emailId= models.CharField(max_length=50, db_column="email_id", unique=True)
     firstName = models.CharField(max_length=50, db_column="first_name")
     lastName = models.CharField(max_length=50, db_column="last_name")
-    password = models.CharField(max_length=20)
+    password = models.CharField(max_length=200)
     dateOfBirth = models.DateField(db_column="date_of_birth")
     company = models.CharField(max_length=50) 
 
