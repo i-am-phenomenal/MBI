@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 # Create your models here.
 
 class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.CharField(max_length=50, primary_key=True, editable=False)
     emailId= models.CharField(max_length=50, db_column="email_id", unique=True)
     firstName = models.CharField(max_length=50, db_column="first_name")
     lastName = models.CharField(max_length=50, db_column="last_name")
@@ -67,3 +67,14 @@ class Price(models.Model):
     intervalCount = models.IntegerField(default=1, db_column="interval_count")
     insertedAt = models.DateTimeField(db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
+
+class Subscription(models.Model): 
+    id = models.CharField(max_length=100, primary_key=True, editable=False)
+    customer = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    price = models.ForeignKey(Price, on_delete=models.CASCADE)
+    insertedAt = models.DateTimeField(db_column="inserted_at")
+    updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
+
+
+# Subscription -> Card details  -> Cancel and resume Subscription -> Update Card details 
+

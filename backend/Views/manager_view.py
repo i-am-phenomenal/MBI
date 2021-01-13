@@ -9,6 +9,8 @@ from .. import helpers
 import json
 from ..authentication_utils import AuthenticationUtils
 from rest_framework.authtoken.models import Token 
+import stripe
+from django.conf import settings
 # Create your views here.
 
 class ManagerView(View):
@@ -19,8 +21,18 @@ class ManagerView(View):
     @decorators.checkIfEmailAlreadyPresent
     @decorators.validatePassword
     def signUp(self, request): 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
         params = helpers.getRequestParams(request)
+        try: 
+            resp = stripe.Customer.create(
+                email = params["emailId"],
+                name = params["firstName"] + " " + params["lastName"]
+            )
+            print(resp)
+        except Exception as e: 
+            print(e)
         managerObject = Manager(
+            id = resp["id"],
             emailId = params["emailId"],
             password = make_password(params["password"]),
             company = params["company"],
@@ -30,6 +42,7 @@ class ManagerView(View):
             insertedAt = datetime.now()
         )
         managerObject.save()
+        
         converted = vars(managerObject)
         return HttpResponse(
             json.dumps(

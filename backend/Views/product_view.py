@@ -22,7 +22,7 @@ class ProductView(View):
                 name= params["name"]
             )
             Product.objects.create(
-                productId = resp["id"],
+                id = resp["id"],
                 productName = resp["name"],
                 insertedAt = datetime.now()
             )

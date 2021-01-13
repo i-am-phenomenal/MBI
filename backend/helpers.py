@@ -24,7 +24,7 @@ def convertStrtoDate(dateStr):
 
 def getManagetDict(converted, message): 
     return {
-        "uuid": str(converted["uuid"]),
+        "id": str(converted["id"]),
         "emailId": converted["emailId"],
         "company" : converted["company"],
         "firstName": converted["firstName"],

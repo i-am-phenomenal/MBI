@@ -33,4 +33,5 @@ urlpatterns = [
 
     path("price/create/", priceView.createPrice),
     path("price/get_all/", priceView.getAllPrices),
+    path("price/delete/", priceView.deletePriceById),
 ]

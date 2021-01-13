@@ -96,11 +96,22 @@ def checkIfProductIdExists(function):
     def innerFunction(self, request): 
         params = helpers.getRequestParams(request)
         getProductById = lambda id: Product.objects.filter(id=id).exists()
-        resp = function(self, request) if not getProductById(params["productId"]) else helpers.getBadResponse("Product with the Id does not exist", 400)
+        resp = function(self, request) if getProductById(params["productId"]) else helpers.getBadResponse("Product with the Id does not exist", 400)
         return resp
     return innerFunction
 
 def checkIfGETMethod(function):
     def innerFunction(self, request):
         return function(self, request) if request.method == "GET" else helpers.getBadResponse("Invalid request method", 400)
+    return innerFunction
+
+def checkIfDELETEMethod(function): 
+    def innerFunction(self, request): 
+        return function(self, request) if request.method == "DELETE" else helpers.getBadResponse("Invalid request method.", 400)
+    return innerFunction 
+
+def checkIfProductIdPresent(function): 
+    def innerFunction(self, request): 
+        params = helpers.getRequestParams(request)
+        return function(self, request, params["priceId"]) if "priceId" in params else helpers.getBadResponse("Price Id not present in request", 400)
     return innerFunction
