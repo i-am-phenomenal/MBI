@@ -1,6 +1,8 @@
 from . import helpers
 from .models import *
 from django.contrib.auth.hashers import check_password
+from rest_framework.authtoken.models import Token 
+from .authentication_utils import AuthenticationUtils
 
 def validateRequestContentType(function):
     def innerFunction(self, request):
@@ -115,3 +117,48 @@ def checkIfProductIdPresent(function):
         params = helpers.getRequestParams(request)
         return function(self, request, params["priceId"]) if "priceId" in params else helpers.getBadResponse("Price Id not present in request", 400)
     return innerFunction
+
+def validateIfAuthTokenPresent(function): 
+    def innerFunction(self, request):
+        headers = request.headers
+        successCondition = ("Authorization" in headers) or ("authorization") in headers
+        response = function(self, request) if successCondition else getBadResponse("Malformed request. Authorization header not present in the request", 401)
+        return response
+    return innerFunction
+
+def checkIfTokenExists(function):
+    def innerFunction(self, request):
+        authUtils = AuthenticationUtils()
+        headers = request.headers
+        authToken = headers["Authorization"].split(" ")[1]
+        return function(self, request) if authUtils.tokenExists(authToken) else helpers.getBadResponse("Token does not exist", 401)
+    return innerFunction
+
+def checkIfTokenExpired(function): 
+    def innerFunction(self, request): 
+        authUtils = AuthenticationUtils()
+        headers = request.headers
+        authToken = headers["Authorization"].split(" ")[1]
+        getToken = lambda key: Token.objects.get(key=key)
+        return function(self, request) if not authUtils.checkIfTokenExpired(getToken(authToken)) else helpers.getBadResponse("Invalid Auth Token. Please Login once again", 401)
+    return innerFunction
+
+def validateFieldsForSubscription(function):
+    def innerFunction(self, request):
+        params = helpers.getRequestParams(request)
+        successCondition = "customerId" in params and "priceId" in params
+        return function(self, params["customerId"], params["priceId"]) if successCondition else helpers.getBadResponse("One or more fields missing", 400)
+    return innerFunction
+
+def checkIfCustomerExists(function): 
+    def innerFunction(self, customerId, priceId): 
+        managerExists = lambda id: Manager.objects.filter(id=id).exists()
+        return function(self, customerId, priceId) if managerExists(customerId) else helpers.getBadResponse("Customer does not exist", 400)
+    return innerFunction
+
+def checkIfPriceExists(function): 
+    def innerFunction(self, customerId, priceId): 
+        priceExists = lambda id: Price.objects.filter(id=id).exists()
+        return function(self, customerId, priceId) if priceExists(priceId) else helpers.getBadResponse("Price does not exist", 400)
+    return innerFunction
+

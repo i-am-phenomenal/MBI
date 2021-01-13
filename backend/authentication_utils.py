@@ -53,5 +53,8 @@ class AuthenticationUtils():
         newToken = Token.objects.create(user=tempUser)
         return newToken
 
+    def tokenExists(self, token): 
+        return True if Token.objects.filter(key=token).exists() else False
+
     def generateAuthToken(self, user): 
         pass

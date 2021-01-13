@@ -18,10 +18,12 @@ from django.urls import path
 from backend.Views.manager_view import ManagerView
 from backend.Views.product_view import ProductView
 from backend.Views.price_view import PriceView
+from backend.Views.subscription_view import SubscriptionView
 
 managerView = ManagerView()
 productView = ProductView()
 priceView = PriceView()
+subsView = SubscriptionView()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,4 +36,6 @@ urlpatterns = [
     path("price/create/", priceView.createPrice),
     path("price/get_all/", priceView.getAllPrices),
     path("price/delete/", priceView.deletePriceById),
+
+    path("subscriptions/create/", subsView.createSubscription)
 ]

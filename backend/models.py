@@ -12,6 +12,7 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
     password = models.CharField(max_length=200)
     dateOfBirth = models.DateField(db_column="date_of_birth")
     company = models.CharField(max_length=50) 
+    # paymentMethod = models.CharField()
 
     isAdmin = models.BooleanField(default=False, db_column="is_admin")
     isStaff = models.BooleanField(default=False, db_column="is_staff")

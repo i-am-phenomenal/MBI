@@ -28,6 +28,14 @@ class PriceView(View):
             )
         except Exception as e: 
             print(e)
+        Price.objects.create(
+            id = resp["id"],
+            product = Product.objects.get(id=resp["product"]),
+            currency = resp["currency"],
+            unitAmount = resp["unit_amount"],
+            intervalCount = resp["recurring"]["interval_count"],
+            insertedAt = datetime.now()
+        )
         return HttpResponse(
             json.dumps(
                 {
