@@ -32,6 +32,9 @@ urlpatterns = [
 
     path("manager/signup/", managerView.signUp),
     path("manager/login/", managerView.login),
+    path("manager/update_payment_method/", managerView.updatePaymentMethod),
+    path("manager/remove_card_details/", managerView.removePaymentMethod),
+    path("manager/get_payment_methods/<str:managerId>", managerView.getAllPaymentMethods),
 
     path("product/create/", productView.createProduct),
 
@@ -40,6 +43,7 @@ urlpatterns = [
     path("price/delete/", priceView.deletePriceById),
 
     path("payment_method/create/", paymentView.createPaymentMethod),
+
 
     path("subscriptions/create/", subsView.createSubscription),
 ]

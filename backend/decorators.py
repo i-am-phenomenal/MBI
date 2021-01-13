@@ -62,6 +62,11 @@ def validateHttpMethod(function):
         return resp
     return innerFunction
 
+def validateIfPUTMethod(fn): 
+    def innerFn(self, request): 
+        return fn(self, request) if request.method == "PUT" else helpers.getBadResponse("Bad Request. Invalid HTTP Method", 400)
+    return innerFn
+
 def checkIfValidCreds(function): 
     def innerFunction(self, request): 
         params = helpers.getRequestParams(request)
@@ -190,4 +195,37 @@ def validatePaymentParams(fn):
         params = helpers.getRequestParams(request)
         successCond = len(params["cardNumber"]) == 16 and len(params["cvv"]) == 3
         return fn(self, request) if successCond else helpers.getBadResponse("Invalid card number or cvv. Please try again", 500)
+    return innerFn
+
+def validateFieldsForCardDetails(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        return fn(self, request) if ("paymentMethodId" in params and "managerId" in params) else helpers.getBadResponse("Invalid Request Body", 400)
+    return innerFn
+
+def checkIfManagerExists(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        managerExists = lambda id: Manager.objects.filter(id=id).exists()
+        return fn(self, request) if managerExists(params["managerId"]) else helpers.getBadResponse("Manager with the given id does not exist", 500)
+    return innerFn
+
+def checkIfCardDetailsExists(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        cardDetailsExists = lambda id: PaymentMethod.objects.get(id=id)
+        return fn(self, request) if cardDetailsExists(params["paymentMethodId"]) else helpers.getBadResponse("Invalid Card details", 400)
+    return innerFn
+
+def checkIfPaymentMethodExists(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        paymentMethodExists = lambda id: PaymentMethod.objects.filter(id=id).exists()
+        return fn(self, request) if paymentMethodExists(params["paymentMethodId"]) else helpers.getBadResponse("Payment method does not exist", 400)
+    return innerFn
+
+def checkIfPaymentIdPresent(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        return fn(self, request) if "paymentMethodId" in params else helpers.getBadResponse("Payment Method Id not present", 400)
     return innerFn
