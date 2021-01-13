@@ -19,11 +19,13 @@ from backend.Views.manager_view import ManagerView
 from backend.Views.product_view import ProductView
 from backend.Views.price_view import PriceView
 from backend.Views.subscription_view import SubscriptionView
+from backend.Views.payment_method_view import PaymentMethodView
 
 managerView = ManagerView()
 productView = ProductView()
 priceView = PriceView()
 subsView = SubscriptionView()
+paymentView = PaymentMethodView()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,5 +39,7 @@ urlpatterns = [
     path("price/get_all/", priceView.getAllPrices),
     path("price/delete/", priceView.deletePriceById),
 
-    path("subscriptions/create/", subsView.createSubscription)
+    path("payment_method/create/", paymentView.createPaymentMethod),
+
+    path("subscriptions/create/", subsView.createSubscription),
 ]

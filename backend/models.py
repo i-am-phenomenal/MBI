@@ -4,6 +4,17 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 # Create your models here.
 
+class PaymentMethod(models.Model): 
+    id = models.CharField(max_length=50, primary_key=True, editable=False)
+    type = models.CharField(max_length=50, default="card")
+    cardNumber = models.CharField(max_length=50, db_column="card_number")
+    expiryMonth = models.IntegerField(db_column="expiry_month")
+    expiryYear = models.IntegerField(db_column="expiry_year")
+    cvv = models.CharField(max_length=3)
+    insertedAt = models.DateTimeField(db_column="inserted_at")
+    updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
+
+
 class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
     emailId= models.CharField(max_length=50, db_column="email_id", unique=True)
@@ -12,7 +23,7 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
     password = models.CharField(max_length=200)
     dateOfBirth = models.DateField(db_column="date_of_birth")
     company = models.CharField(max_length=50) 
-    # paymentMethod = models.CharField()
+    cardDetails = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
 
     isAdmin = models.BooleanField(default=False, db_column="is_admin")
     isStaff = models.BooleanField(default=False, db_column="is_staff")
@@ -76,6 +87,4 @@ class Subscription(models.Model):
     insertedAt = models.DateTimeField(db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
 
-
 # Subscription -> Card details  -> Cancel and resume Subscription -> Update Card details 
-

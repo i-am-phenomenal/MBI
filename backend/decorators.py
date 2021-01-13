@@ -3,6 +3,7 @@ from .models import *
 from django.contrib.auth.hashers import check_password
 from rest_framework.authtoken.models import Token 
 from .authentication_utils import AuthenticationUtils
+from datetime import datetime
 
 def validateRequestContentType(function):
     def innerFunction(self, request):
@@ -162,3 +163,31 @@ def checkIfPriceExists(function):
         return function(self, customerId, priceId) if priceExists(priceId) else helpers.getBadResponse("Price does not exist", 400)
     return innerFunction
 
+def validateFieldsForPayment(function): 
+    def innerFunction(self, request): 
+        params = helpers.getRequestParams(request)
+        cond = "cardNumber" in params and "expiryMonth" in params and "expiryYear" in params and "cvv" in params
+        return function(self, request) if cond else helpers.getBadResponse("Bad request. One or more fields are missing", 400)
+    return innerFunction
+
+def checkIfCardAlreadyExists(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        getCard = lambda cardNumber: PaymentMethod.objects.filter(cardNumber=cardNumber).exists()
+        return fn(self, request) if not getCard(params["cardNumber"]) else helpers.getBadResponse("Card with the given number already exists", 500)
+    return innerFn
+
+def checkIfCardExpired(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        today = datetime.today().date()
+        successCond = today < datetime(year = params["expiryYear"], month=params["expiryMonth"], day=1).date()
+        return fn(self, request) if successCond else helpers.getBadResponse("Card is Expired. Please enter a new card", 500)
+    return innerFn
+
+def validatePaymentParams(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        successCond = len(params["cardNumber"]) == 16 and len(params["cvv"]) == 3
+        return fn(self, request) if successCond else helpers.getBadResponse("Invalid card number or cvv. Please try again", 500)
+    return innerFn
