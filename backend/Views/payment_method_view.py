@@ -22,7 +22,6 @@ class PaymentMethodView(View):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         params = helpers.getRequestParams(request)
         try: 
-            print(params["cardNumber"], len(params["cardNumber"]), "12222222222222222222222222222")
             resp = stripe.PaymentMethod.create(
                 type="card",
                 card={

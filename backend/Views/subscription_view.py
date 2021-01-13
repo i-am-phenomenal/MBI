@@ -6,6 +6,7 @@ from .. import decorators
 from .. import helpers
 from ..models import *
 from datetime import datetime
+import json
 
 
 class SubscriptionView(View): 
@@ -17,18 +18,19 @@ class SubscriptionView(View):
     @decorators.validateFieldsForSubscription
     @decorators.checkIfCustomerExists
     @decorators.checkIfPriceExists
-    def createSubscription(self, customerId, priceId): 
+    def createSubscription(self, customerId, priceId, paymentMethodId): 
         stripe.api_key = settings.STRIPE_SECRET_KEY
         try: 
             resp = stripe.Subscription.create(
                 customer=customerId,
                 items=[
                     {"price": priceId},
-                ],
+                ]
             )
             print(resp)
         except Exception as e: 
-            print(e, "1111111111111111111111111111")
+            print(e)
+            return helpers.getBadResponse(str(e), 500)
 
         Subscription.objects.create(
             id= resp["id"],

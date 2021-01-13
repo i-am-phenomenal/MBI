@@ -152,20 +152,20 @@ def checkIfTokenExpired(function):
 def validateFieldsForSubscription(function):
     def innerFunction(self, request):
         params = helpers.getRequestParams(request)
-        successCondition = "customerId" in params and "priceId" in params
-        return function(self, params["customerId"], params["priceId"]) if successCondition else helpers.getBadResponse("One or more fields missing", 400)
+        successCondition = "customerId" in params and "priceId" in params and "paymentMethodId" in params
+        return function(self, params["customerId"], params["priceId"], params["paymentMethodId"]) if successCondition else helpers.getBadResponse("One or more fields missing", 400)
     return innerFunction
 
 def checkIfCustomerExists(function): 
-    def innerFunction(self, customerId, priceId): 
+    def innerFunction(self, customerId, priceId, paymentMethodId): 
         managerExists = lambda id: Manager.objects.filter(id=id).exists()
-        return function(self, customerId, priceId) if managerExists(customerId) else helpers.getBadResponse("Customer does not exist", 400)
+        return function(self, customerId, priceId, paymentMethodId) if managerExists(customerId) else helpers.getBadResponse("Customer does not exist", 400)
     return innerFunction
 
 def checkIfPriceExists(function): 
-    def innerFunction(self, customerId, priceId): 
+    def innerFunction(self, customerId, priceId, paymentMethodId): 
         priceExists = lambda id: Price.objects.filter(id=id).exists()
-        return function(self, customerId, priceId) if priceExists(priceId) else helpers.getBadResponse("Price does not exist", 400)
+        return function(self, customerId, priceId, paymentMethodId) if priceExists(priceId) else helpers.getBadResponse("Price does not exist", 400)
     return innerFunction
 
 def validateFieldsForPayment(function): 
@@ -213,7 +213,7 @@ def checkIfManagerExists(fn):
 def checkIfCardDetailsExists(fn): 
     def innerFn(self, request): 
         params = helpers.getRequestParams(request)
-        cardDetailsExists = lambda id: PaymentMethod.objects.get(id=id)
+        cardDetailsExists = lambda id: PaymentMethod.objects.filter(id=id).exists()
         return fn(self, request) if cardDetailsExists(params["paymentMethodId"]) else helpers.getBadResponse("Invalid Card details", 400)
     return innerFn
 
@@ -228,4 +228,11 @@ def checkIfPaymentIdPresent(fn):
     def innerFn(self, request): 
         params = helpers.getRequestParams(request)
         return fn(self, request) if "paymentMethodId" in params else helpers.getBadResponse("Payment Method Id not present", 400)
+    return innerFn
+
+def validateFieldsForPaymentMethod(fn): 
+    def innerFn(self, request):
+        params = helpers.getRequestParams(request)
+        successCondition = "paymentMethodId" in params and "managerId" in params
+        return fn(self, request) if successCondition else helpers.getBadResponse("One or more fields are missing.", 400)
     return innerFn

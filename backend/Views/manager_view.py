@@ -164,4 +164,29 @@ class ManagerView(View):
             json.dumps(resp),
             content_type="application/json"
         )
+
+    @decorators.validateRequestContentType
+    @decorators.validateHttpMethod
+    @decorators.validateIfAuthTokenPresent
+    @decorators.checkIfTokenExists
+    @decorators.validateFieldsForPaymentMethod
+    @decorators.checkIfPaymentIdPresent
+    @decorators.checkIfManagerExists
+    def addDefaultPaymentMethod(self, request):
+        params = helpers.getRequestParams(request) 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        try: 
+            resp = stripe.Customer.modify(
+                params["managerId"],
+                invoice_settings=
+                {
+                    "default_payment_method": params["paymentMethodId"]
+                },
+            )
+        except Exception as e: 
+            return helpers.getBadResponse(str(e), 500)
+        return HttpResponse(
+            json.dumps(resp),
+            content_type="application/json"
+        )
         
