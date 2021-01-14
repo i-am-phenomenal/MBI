@@ -189,4 +189,18 @@ class ManagerView(View):
             json.dumps(resp),
             content_type="application/json"
         )
-        
+
+    # @decorators.validateRequestContentType
+    @decorators.checkIfGETMethod
+    @decorators.validateIfAuthTokenPresent
+    @decorators.checkIfTokenExists
+    def getManagerDetailsByToken(self, request):
+        token = helpers.getTokenFromRequest(request) 
+        authenticationUtils = AuthenticationUtils()
+        managerObject = authenticationUtils.getUserByToken(token)
+        return HttpResponse(
+            json.dumps(
+                helpers.getManagetDict(vars(managerObject), "Ok")
+            ),
+            content_type="application/json"
+        )

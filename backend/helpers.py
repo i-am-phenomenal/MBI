@@ -22,6 +22,9 @@ def convertStrtoDate(dateStr):
     formatted = datetime.strptime(dateStr, "%d/%m/%Y").date()
     return formatted
 
+def convertDateToStr(date): 
+    return str(date.day) + "/" + str(date.month) + "/" + str(date.year)
+
 def getManagetDict(converted, message): 
     return {
         "id": str(converted["id"]),
@@ -29,5 +32,11 @@ def getManagetDict(converted, message):
         "company" : converted["company"],
         "firstName": converted["firstName"],
         "lastName": converted["lastName"],
+        "dateOfBirth": convertDateToStr(converted["dateOfBirth"]),
         "message": message
     }
+
+def getTokenFromRequest(request):
+    headers = request.headers
+    authToken = headers["Authorization"].split(" ")[1]
+    return authToken

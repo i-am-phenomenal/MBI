@@ -7,6 +7,7 @@ from datetime import datetime
 
 def validateRequestContentType(function):
     def innerFunction(self, request):
+        print(request.headers, "222222222222222222222")
         successCondition = request.content_type == "application/json"
         response = function(self, request) if successCondition else helpers.getBadResponse("Bad Request. Invalid Content Type", 400)
         return response

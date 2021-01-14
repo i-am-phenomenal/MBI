@@ -56,5 +56,8 @@ class AuthenticationUtils():
     def tokenExists(self, token): 
         return True if Token.objects.filter(key=token).exists() else False
 
-    def generateAuthToken(self, user): 
-        pass
+    def getUserByToken(self, tokenKey):
+        tokenObject = Token.objects.get(key=tokenKey)
+        return tokenObject.user
+
+    
