@@ -60,7 +60,7 @@ class PaymentMethodView(View):
         cardDetails = manager.cardDetails
         if cardDetails is None: 
             return HttpResponse(
-                json.dumps(None),
+                json.dumps(""),
                 content_type="application/json"
             )
         return HttpResponse(

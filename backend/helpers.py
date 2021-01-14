@@ -34,7 +34,8 @@ def getManagetDict(converted, message):
         "firstName": converted["firstName"],
         "lastName": converted["lastName"],
         "dateOfBirth": convertDateToStr(converted["dateOfBirth"]),
-        "message": message
+        "message": message,
+        "paymentMethodId": converted["cardDetails_id"]
     }
 
 def getTokenFromRequest(request):

@@ -128,7 +128,7 @@ def validateIfAuthTokenPresent(function):
     def innerFunction(self, request):
         headers = request.headers
         successCondition = ("Authorization" in headers) or ("authorization") in headers
-        response = function(self, request) if successCondition else getBadResponse("Malformed request. Authorization header not present in the request", 401)
+        response = function(self, request) if successCondition else helpers.getBadResponse("Malformed request. Authorization header not present in the request", 401)
         return response
     return innerFunction
 

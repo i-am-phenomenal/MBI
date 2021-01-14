@@ -91,13 +91,20 @@ class ManagerView(View):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         params = helpers.getRequestParams(request)
 
-        try: 
+        try:
             resp = stripe.PaymentMethod.attach(
                 params["paymentMethodId"],
                 customer=params["managerId"],
             )
+            stripe.Customer.modify(
+                params["managerId"],
+                invoice_settings=
+                {
+                    "default_payment_method": params["paymentMethodId"]
+                },
+            )
         except Exception as e: 
-            print(e)
+            print(e, "EEEEEEEEEEEEEEEEE")
             return helpers.getBadResponse("There was an error in adding card details. Please try again later.", 500)
         
         managerObject = Manager.objects.get(id=params["managerId"])
@@ -116,7 +123,7 @@ class ManagerView(View):
         )
 
     @decorators.validateRequestContentType
-    @decorators.checkIfDELETEMethod
+    # @decorators.checkIfDELETEMethod
     @decorators.validateIfAuthTokenPresent
     @decorators.checkIfTokenExists
     @decorators.checkIfPaymentIdPresent
