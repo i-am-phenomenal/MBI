@@ -18,7 +18,7 @@ class SubscriptionView(View):
     @decorators.validateFieldsForSubscription
     @decorators.checkIfCustomerExists
     @decorators.checkIfPriceExists
-    def createSubscription(self, customerId, priceId, paymentMethodId): 
+    def createSubscription(self, customerId, priceId, paymentMethodId):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         try: 
             resp = stripe.Subscription.create(
@@ -35,7 +35,7 @@ class SubscriptionView(View):
         Subscription.objects.create(
             id= resp["id"],
             customer = Manager.objects.get(id=customerId),
-            price = Price.objects.get(id=priceId),
+            price_id = priceId,
             insertedAt = datetime.now()
         )
         return HttpResponse(

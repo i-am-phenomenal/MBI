@@ -60,6 +60,8 @@ class PriceView(View):
             }
             for price in prices
         ]
+        helpers.populateProductIfDoesNotExist(formatted)
+        helpers.populatePricesIfDoesNotExist(formatted)
         return HttpResponse(
             json.dumps(formatted),
             content_type="application/json"

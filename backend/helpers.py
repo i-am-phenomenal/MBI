@@ -66,3 +66,37 @@ def getFormattedProductDetails(fetched):
         "name": fetched["name"],
         "productId": fetched["id"]
     }
+
+def populateProductIfDoesNotExist(prices):
+    productExists = lambda id: Product.objects.filter(id=id).exists()
+    for element in prices:
+        if not (productExists(element["product"])): 
+            try:
+                Product.objects.create(
+                    id=element["product"]["productId"],
+                    productName=element["product"]["name"],
+                    insertedAt=datetime.now(),
+                )
+                print("Product Created !")
+            except Exception as e:
+                print(e)
+                pass
+
+def populatePricesIfDoesNotExist(prices):
+    priceExists = lambda priceId: Price.objects.filter(id=priceId).exists() 
+    for price in prices:
+        if not (priceExists(price["priceId"])):
+            try:
+                Price.objects.create(
+                    id=price["priceId"],
+                    currency=price["currency"],
+                    interval=price["interval"],
+                    intervalCount=price["intervalCount"],
+                    unitAmount=price["unitAmount"],
+                    insertedAt=datetime.now(),
+                    product_id=price["product"]["productId"]
+                )
+                print("Price Created !")
+            except Exception as e:
+                print(e)
+                pass
