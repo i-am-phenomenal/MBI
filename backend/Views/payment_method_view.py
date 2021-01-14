@@ -25,7 +25,7 @@ class PaymentMethodView(View):
             resp = stripe.PaymentMethod.create(
                 type="card",
                 card={
-                    "number": params["cardNumber"],
+                    "number": params["cardNumber"].strip(),
                     "exp_month": params["expiryMonth"],
                     "exp_year": params["expiryYear"],
                     "cvc": params["cvv"],
@@ -52,3 +52,22 @@ class PaymentMethodView(View):
             ),
             content_type = "application/json"
         )
+
+    @decorators.validateIfAuthTokenPresentForGET
+    @decorators.checkIfTokenExistsForGET
+    def getCardDetails(self, request, managerId):
+        manager = Manager.objects.get(id=managerId)
+        cardDetails = manager.cardDetails
+        return HttpResponse(
+            json.dumps(
+                {
+                    "type": cardDetails.type, 
+                    "cardNumber": cardDetails.cardNumber, 
+                    "expiryMonth": cardDetails.expiryMonth,
+                    "expiryYear": cardDetails.expiryYear,
+                    "cvv": cardDetails.cvv
+                }
+            ),
+            content_type="application/json"
+        ) 
+        

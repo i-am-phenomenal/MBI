@@ -44,15 +44,18 @@ def getTokenFromRequest(request):
 
 def getAllSubscriptionsAndPrices(managerId):
     subs = Subscription.objects.filter(customer_id=managerId)
-    formatted = [
-        {
-            "productName": sub.price.product.productName,
-            "currency": sub.price.currency,
-            "unitAmount": sub.price.unitAmount,
-            "billingScheme": sub.price.billingScheme,
-            "interval": sub.price.interval,
-            "intervalCount": sub.price.intervalCount
-        }
-        for sub in subs
-    ]
-    return formatted
+    if subs == [] or subs == None:
+        return []
+    else:
+        formatted = [
+            {
+                "productName": sub.price.product.productName,
+                "currency": sub.price.currency,
+                "unitAmount": sub.price.unitAmount,
+                "billingScheme": sub.price.billingScheme,
+                "interval": sub.price.interval,
+                "intervalCount": sub.price.intervalCount
+            }
+            for sub in subs
+        ]
+        return formatted

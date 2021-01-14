@@ -45,8 +45,12 @@ urlpatterns = [
     path("price/delete/", priceView.deletePriceById),
 
     path("payment_method/create/", paymentView.createPaymentMethod),
+    path("payment_method/get_card_details/<str:managerId>/", paymentView.getCardDetails),
 
 
     path("subscriptions/create/", subsView.createSubscription),
-    path("subscriptions/get_available/<str:managerId>/", subsView.getAvailableSubscriptionsAndPrice)
+    path("subscriptions/get_available/<str:managerId>/", subsView.getAvailableSubscriptionsAndPrice),
+
+
+    # path("seed_data/")
 ]
