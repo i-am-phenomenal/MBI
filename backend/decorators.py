@@ -7,7 +7,6 @@ from datetime import datetime
 
 def validateRequestContentType(function):
     def innerFunction(self, request):
-        print(request.headers, "222222222222222222222")
         successCondition = request.content_type == "application/json"
         response = function(self, request) if successCondition else helpers.getBadResponse("Bad Request. Invalid Content Type", 400)
         return response
@@ -133,6 +132,14 @@ def validateIfAuthTokenPresent(function):
         return response
     return innerFunction
 
+def validateIfAuthTokenPresentForGET(fn): 
+    def innerFn(self, request, managerId): 
+        headers = request.headers
+        successCondition = ("Authorization" in headers) or ("authorization") in headers
+        response = fn(self, request, managerId) if successCondition else getBadResponse("Malformed request. Authorization header not present in the request", 401)
+        return response
+    return innerFn
+
 def checkIfTokenExists(function):
     def innerFunction(self, request):
         authUtils = AuthenticationUtils()
@@ -140,6 +147,14 @@ def checkIfTokenExists(function):
         authToken = headers["Authorization"].split(" ")[1]
         return function(self, request) if authUtils.tokenExists(authToken) else helpers.getBadResponse("Token does not exist", 401)
     return innerFunction
+
+def checkIfTokenExistsForGET(fn):
+    def innerFn(self, request, managerId): 
+        authUtils = AuthenticationUtils()
+        headers = request.headers
+        authToken = headers["Authorization"].split(" ")[1]
+        return fn(self, request, managerId) if authUtils.tokenExists(authToken) else helpers.getBadResponse("Token does not exist", 401)
+    return innerFn
 
 def checkIfTokenExpired(function): 
     def innerFunction(self, request): 

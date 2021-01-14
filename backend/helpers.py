@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 import json
 from datetime import datetime
+from .models import *
 
 def getBadResponse(message, statusCode): 
     return HttpResponse(
@@ -40,3 +41,18 @@ def getTokenFromRequest(request):
     headers = request.headers
     authToken = headers["Authorization"].split(" ")[1]
     return authToken
+
+def getAllSubscriptionsAndPrices(managerId):
+    subs = Subscription.objects.filter(customer_id=managerId)
+    formatted = [
+        {
+            "productName": sub.price.product.productName,
+            "currency": sub.price.currency,
+            "unitAmount": sub.price.unitAmount,
+            "billingScheme": sub.price.billingScheme,
+            "interval": sub.price.interval,
+            "intervalCount": sub.price.intervalCount
+        }
+        for sub in subs
+    ]
+    return formatted

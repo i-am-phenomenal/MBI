@@ -47,3 +47,14 @@ class SubscriptionView(View):
             ),
             content_type="application/json"
         )
+
+    # @decorators.validateHttpMethod
+    @decorators.validateIfAuthTokenPresentForGET
+    @decorators.checkIfTokenExistsForGET
+    def getAvailableSubscriptionsAndPrice(self, request, managerId): 
+        managerObject = Manager.objects.get(id=managerId)
+        allSubs = helpers.getAllSubscriptionsAndPrices(managerId)
+        return HttpResponse(
+            json.dumps(allSubs),
+            content_type="application/json"
+        )
