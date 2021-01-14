@@ -48,10 +48,20 @@ class PriceView(View):
     @decorators.checkIfGETMethod
     def getAllPrices(self, request):
         stripe.api_key = settings.STRIPE_SECRET_KEY
-        prices = stripe.Price.list(limit=10)
-        print(prices)
+        prices = stripe.Price.list(limit=10)["data"]
+        formatted = [
+            {
+                "priceId": price["id"],
+                "currency": price["currency"],
+                "interval": price["recurring"]["interval"],
+                "intervalCount": price["recurring"]["interval_count"],
+                "product": helpers.getFormattedProductDetails(stripe.Product.retrieve(price["product"])),
+                "unitAmount": price["unit_amount"]
+            }
+            for price in prices
+        ]
         return HttpResponse(
-            json.dumps(prices),
+            json.dumps(formatted),
             content_type="application/json"
         )
 

@@ -60,3 +60,9 @@ def getAllSubscriptionsAndPrices(managerId):
             for sub in subs
         ]
         return formatted
+
+def getFormattedProductDetails(fetched): 
+    return {
+        "name": fetched["name"],
+        "productId": fetched["id"]
+    }
