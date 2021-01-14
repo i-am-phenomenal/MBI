@@ -101,7 +101,8 @@ class ManagerView(View):
             return helpers.getBadResponse("There was an error in adding card details. Please try again later.", 500)
         
         managerObject = Manager.objects.get(id=params["managerId"])
-        managerObject.cardDetails = PaymentMethod.objects.get(id=params["paymentMethodId"])
+        paymentMethodObject = PaymentMethod.objects.get(id=params["paymentMethodId"])
+        managerObject.cardDetails = paymentMethodObject
         managerObject.save()
 
         return HttpResponse(
@@ -184,6 +185,7 @@ class ManagerView(View):
                 },
             )
         except Exception as e: 
+            print(e, "FFFFFFFFFFFFFFFFFFFF")
             return helpers.getBadResponse(str(e), 500)
         return HttpResponse(
             json.dumps(resp),

@@ -58,6 +58,11 @@ class PaymentMethodView(View):
     def getCardDetails(self, request, managerId):
         manager = Manager.objects.get(id=managerId)
         cardDetails = manager.cardDetails
+        if cardDetails is None: 
+            return HttpResponse(
+                json.dumps(None),
+                content_type="application/json"
+            )
         return HttpResponse(
             json.dumps(
                 {
