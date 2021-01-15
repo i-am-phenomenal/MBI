@@ -86,5 +86,3 @@ class Subscription(models.Model):
     price = models.ForeignKey(Price, on_delete=models.CASCADE)
     insertedAt = models.DateTimeField(db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
-
-# Subscription -> Card details  -> Cancel and resume Subscription -> Update Card details 
