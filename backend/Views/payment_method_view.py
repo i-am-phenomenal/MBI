@@ -75,4 +75,49 @@ class PaymentMethodView(View):
             ),
             content_type="application/json"
         ) 
+
+    def setupPaymentIntent(self, request):
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        params = helpers.getRequestParams(request)
+        try: 
+            resp = stripe.SetupIntent.create(
+                payment_method_types=["card"],
+                customer=params["customerId"],
+                payment_method=params["paymentMethodId"]
+            )
+            print(resp)
+        except Exception as e: 
+            print(e)
+            return helpers.getBadResponse(str(e), 500)
+
+        return HttpResponse("Setup Payment Intent Successful !")
+
+    @decorators.validateRequestContentType
+    @decorators.validateHttpMethod
+    @decorators.validateIfAuthTokenPresent
+    @decorators.checkIfTokenExists
+    @decorators.validateFieldsForPaymentIntent
+    @decorators.validateIfRecordsExist
+    @decorators.checkIfSubscriptionExist
+    def createPaymentIntent(self, request): 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        params = helpers.getRequestParams(request)
+        subscription = Subscription.objects.get(id=params["subscriptionId"])
+        priceObject = Price.objects.get(id=subscription.price_id)
+        try: 
+            resp = stripe.PaymentIntent.create(
+                amount=priceObject.unitAmount,
+                currency=priceObject.currency,
+                payment_method_types=["card"],
+                customer=params["customerId"],
+                payment_method=params["paymentMethodId"]
+            )
+            print(resp)
+        except Exception as e: 
+            print(e)
+            return helpers.getBadResponse(str(e), 500)
+        return HttpResponse(
+            json.dumps(resp),
+            content_type="application/json"
+        )
         

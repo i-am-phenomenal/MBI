@@ -252,3 +252,33 @@ def validateFieldsForPaymentMethod(fn):
         successCondition = "paymentMethodId" in params and "managerId" in params
         return fn(self, request) if successCondition else helpers.getBadResponse("One or more fields are missing.", 400)
     return innerFn
+
+def validateFieldsForPaymentIntent(fn):
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        successCond = "customerId" in params and "paymentMethodId" in params
+        return fn(self, request) if successCond else helpers.getBadResponse("Bad Request. One or more fields are missing", 400)
+    return innerFn
+
+def validateIfRecordsExist(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        managerExists = lambda id: Manager.objects.filter(id=id).exists()
+        paymentMethodExists = lambda id: PaymentMethod.objects.filter(id=id).exists()
+        successCond = managerExists(params["customerId"]) and paymentMethodExists(params["paymentMethodId"])
+        return fn(self, request) if successCond else helpers.getBadResponse("The records with the given ID's do not exist", 400)
+    return innerFn
+
+def validateFieldsForPaymentIntent(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        cond = "customerId" in params and "paymentMethodId" in params and "subscriptionId" in params
+        return fn(self, request) if cond else helpers.getBadResponse("Bad request. One or more fields are missing", 400)
+    return innerFn
+
+def checkIfSubscriptionExist(fn): 
+    def innerFn(self, request): 
+        params = helpers.getRequestParams(request)
+        subscriptionExists = lambda id: Subscription.objects.filter(id=id).exists()
+        return fn(self, request) if subscriptionExists(params["subscriptionId"]) else helpers.getBadResponse("Subscription does not exist", 400)
+    return innerFn

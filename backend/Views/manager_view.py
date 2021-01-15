@@ -104,7 +104,7 @@ class ManagerView(View):
                 },
             )
         except Exception as e: 
-            print(e, "EEEEEEEEEEEEEEEEE")
+            print(e)
             return helpers.getBadResponse("There was an error in adding card details. Please try again later.", 500)
         
         managerObject = Manager.objects.get(id=params["managerId"])
@@ -123,7 +123,6 @@ class ManagerView(View):
         )
 
     @decorators.validateRequestContentType
-    # @decorators.checkIfDELETEMethod
     @decorators.validateIfAuthTokenPresent
     @decorators.checkIfTokenExists
     @decorators.checkIfPaymentIdPresent
@@ -150,12 +149,6 @@ class ManagerView(View):
             content_type="application/json"
         )
 
-    # @decorators.validateRequestContentType
-    # @decorators.checkIfGETMethod
-    # @decorators.validateIfAuthTokenPresent
-    # @decorators.checkIfTokenExists
-    # @decorator.checkIfManagerIdPresent
-    # @decorators.checkIfManagerExists
     def getAllPaymentMethods(self, request, managerId): 
         stripe.api_key = settings.STRIPE_SECRET_KEY
         try: 
@@ -192,14 +185,13 @@ class ManagerView(View):
                 },
             )
         except Exception as e: 
-            print(e, "FFFFFFFFFFFFFFFFFFFF")
+            print(e)
             return helpers.getBadResponse(str(e), 500)
         return HttpResponse(
             json.dumps(resp),
             content_type="application/json"
         )
 
-    # @decorators.validateRequestContentType
     @decorators.checkIfGETMethod
     @decorators.validateIfAuthTokenPresent
     @decorators.checkIfTokenExists
