@@ -58,3 +58,27 @@ class SubscriptionView(View):
             json.dumps(allSubs),
             content_type="application/json"
         )
+
+    @decorators.validateHttpMethod
+    @decorators.validateIfAuthTokenPresent
+    @decorators.checkIfTokenExists
+    def removeSubscription(self, request): 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        params = helpers.getRequestParams(request)
+        try: 
+            resp = stripe.Subscription.delete(params["subscriptionId"])
+            print(resp)
+        except Exception as e: 
+            print(e)
+            return HttpResponse(str(e), 500)
+
+        subscriptionObject = Subscription.objects.get(id=params["subscriptionId"])
+        subscriptionObject.delete()
+        return HttpResponse(
+            json.dumps(
+                {
+                    "message": "The user has been unsubscribed from the plan."
+                }
+            ),
+            content_type="application/json"
+        )

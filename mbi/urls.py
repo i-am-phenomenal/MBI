@@ -50,6 +50,7 @@ urlpatterns = [
 
     path("subscriptions/create/", subsView.createSubscription),
     path("subscriptions/get_available/<str:managerId>/", subsView.getAvailableSubscriptionsAndPrice),
+    path("subscriptions/delete/", subsView.removeSubscription)
 
 
     # path("seed_data/")

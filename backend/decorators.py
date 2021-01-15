@@ -136,7 +136,7 @@ def validateIfAuthTokenPresentForGET(fn):
     def innerFn(self, request, managerId): 
         headers = request.headers
         successCondition = ("Authorization" in headers) or ("authorization") in headers
-        response = fn(self, request, managerId) if successCondition else getBadResponse("Malformed request. Authorization header not present in the request", 401)
+        response = fn(self, request, managerId) if successCondition else helpers.getBadResponse("Malformed request. Authorization header not present in the request", 401)
         return response
     return innerFn
 

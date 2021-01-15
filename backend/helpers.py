@@ -55,7 +55,8 @@ def getAllSubscriptionsAndPrices(managerId):
                 "unitAmount": sub.price.unitAmount,
                 "billingScheme": sub.price.billingScheme,
                 "interval": sub.price.interval,
-                "intervalCount": sub.price.intervalCount
+                "intervalCount": sub.price.intervalCount,
+                "subscriptionId": sub.id
             }
             for sub in subs
         ]
