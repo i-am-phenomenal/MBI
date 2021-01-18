@@ -12,11 +12,11 @@ class PaymentMethod(models.Model):
     expiryMonth = models.IntegerField(db_column="expiry_month")
     expiryYear = models.IntegerField(db_column="expiry_year")
     cvv = models.CharField(max_length=3)
-    insertedAt = models.DateTimeField(db_column="inserted_at")
+    insertedAt = models.DateTimeField(auto_now=True, db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
 
 
-class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
+class Manager(AbstractBaseUser, PermissionsMixin, models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
     emailId= models.CharField(max_length=50, db_column="email_id", unique=True)
     firstName = models.CharField(max_length=50, db_column="first_name")
@@ -26,10 +26,10 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
     company = models.CharField(max_length=50) 
     cardDetails = models.ForeignKey(PaymentMethod, on_delete =models.SET_NULL, null=True, blank=True)
 
-    isAdmin = models.BooleanField(default=False, db_column="is_admin")
-    isStaff = models.BooleanField(default=False, db_column="is_staff")
-    isActive = models.BooleanField(default=False, db_column="is_active")
-    isSuperuser = models.BooleanField(default=False, db_column="is_superuser")
+    isAdmin = models.BooleanField(default=True, db_column="is_admin")
+    isStaff = models.BooleanField(default=True, db_column="is_staff")
+    isActive = models.BooleanField(default=True, db_column="is_active")
+    isSuperuser = models.BooleanField(default=True, db_column="is_superuser")
     
     insertedAt = models.DateTimeField(auto_now=True, db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
@@ -37,7 +37,10 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
     USERNAME_FIELD = 'emailId'
     REQUIRED_FIELDS = ('password', 'company', "dateOfBirth")
 
-    objects = MyManager()
+    # objects = MyManager()
+
+    def __str__(self):
+        return self.firstName + " " + self.lastName
 
     def get_short_name(self):
         return self.emailId
@@ -69,7 +72,7 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
 class Product(models.Model):
     id = models.CharField(max_length=100, db_column="product_id", primary_key=True, editable=False)
     productName = models.CharField(max_length=50, db_column="product_name")
-    insertedAt = models.DateTimeField(db_column="inserted_at")
+    insertedAt = models.DateTimeField(auto_now=True, db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
 
 class Price(models.Model):
@@ -80,12 +83,12 @@ class Price(models.Model):
     billingScheme = models.CharField(max_length=20, default="per_unit", db_column="billing_scheme")
     interval = models.CharField(max_length=10, default="month")
     intervalCount = models.IntegerField(default=1, db_column="interval_count")
-    insertedAt = models.DateTimeField(db_column="inserted_at")
+    insertedAt = models.DateTimeField(auto_now=True, db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
 
 class Subscription(models.Model): 
     id = models.CharField(max_length=100, primary_key=True, editable=False)
     customer = models.ForeignKey(Manager, on_delete=models.CASCADE)
     price = models.ForeignKey(Price, on_delete=models.CASCADE)
-    insertedAt = models.DateTimeField(db_column="inserted_at")
+    insertedAt = models.DateTimeField(auto_now=True, db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")

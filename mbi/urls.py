@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView
-from backend.Views.product_view import ProductView, ProductListCreateView
+from backend.Views.product_view import ProductView, ProductListCreateView, ProductRetreiveDestroyView
 from backend.Views.price_view import PriceView
 from backend.Views.subscription_view import SubscriptionView
 from backend.Views.payment_method_view import PaymentMethodView
@@ -41,6 +41,7 @@ urlpatterns = [
     path("manager/<str:id>/", ManagerRetreiveDestroyView.as_view()),
 
     path("product/", ProductListCreateView.as_view()),
+    path("product/<str:id>/", ProductRetreiveDestroyView.as_view()),
     # path("product/create/", productView.createProduct),
 
     path("price/create/", priceView.createPrice),

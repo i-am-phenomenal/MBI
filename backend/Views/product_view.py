@@ -8,7 +8,7 @@ from ..models import *
 from datetime import datetime
 from rest_framework import generics
 from ..Serializers.product_serializer import ProductSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 class ProductView(View): 
 
@@ -38,6 +38,29 @@ class ProductListCreateView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer): 
-        print(serializer)
+    def post(self, request): 
+        params = helpers.getRequestParams(request)
+        stripe.api_key = settings.STRIPE_SECRET_KEY 
+        try: 
+            resp = stripe.Product.create(
+                name= params["name"]
+            )
+            Product.objects.create(
+                id = resp["id"],
+                productName = resp["name"],
+                insertedAt = datetime.now()
+            )
+        except Exception as e: 
+            print(e)
         return HttpResponse("Ok")
+
+class ProductRetreiveDestroyView(generics.RetrieveUpdateDestroyAPIView): 
+    """
+    Generic API View for GET and DELETE methods for Product
+    Args:
+        generics (Class): Generic API Class from Django Rest Framework
+    """
+    permission_classes = [IsAuthenticated]
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = "id"

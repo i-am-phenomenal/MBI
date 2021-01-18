@@ -3,11 +3,13 @@ from ..models import Product
 
 class ProductSerializer(serializers.ModelSerializer): 
     productName = serializers.CharField(max_length=50)
-    
+
     class Meta: 
         model = Product
         fields = [
-            "productName"
+            "productName",
+            "insertedAt",
+            "updatedAt"
         ]
         extra_kwargs = {
             "insertedAt": {
