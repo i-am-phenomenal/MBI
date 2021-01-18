@@ -14,7 +14,8 @@ from django.conf import settings
 from rest_framework import generics
 from ..Serializers.manager_serializer import ManagerSerializer, ManagerGetPaymentMethodSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .mixin import ModelMixin
+from .mixin import ModelMixin, PermissionMixin
+
 # Create your views here.
 
 class ManagerView(View):
@@ -231,14 +232,13 @@ class ManagerRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIVi
     queryset = Manager.objects.all()
     serializer_class = ManagerSerializer
 
-class ManagerUpdateView(generics.UpdateAPIView): 
+class ManagerUpdateView(PermissionMixin, generics.UpdateAPIView): 
     """
     Generic API View for Update methods for Manager
     Args:
         DealerMixin (Class): Mixin Class to set the lookup field to id 
         generics (Class): Generic API Class
     """
-    permission_classes = [IsAuthenticated]
     queryset = Manager.objects.all()
     serializer_class = ManagerSerializer
 
@@ -277,7 +277,7 @@ class ManagerUpdateView(generics.UpdateAPIView):
             content_type="application/json"
         )
 
-class ManagerRetreivePaymentMethod(generics.RetrieveAPIView): 
+class ManagerRetreivePaymentMethod(ModelMixin, PermissionMixin, generics.RetrieveAPIView): 
     """
     View class for GET for Manager's payment method
 
@@ -285,6 +285,4 @@ class ManagerRetreivePaymentMethod(generics.RetrieveAPIView):
         generics (Class): Generic API Class
     """
     queryset = Manager.objects.all()
-    permission_classes = [IsAuthenticated]
     serializer_class = ManagerGetPaymentMethodSerializer
-    lookup_field = "id"

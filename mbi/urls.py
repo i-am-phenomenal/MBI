@@ -18,7 +18,7 @@ from django.urls import path
 from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView, ManagerUpdateView, ManagerRetreivePaymentMethod
 from backend.Views.product_view import ProductView, ProductListCreateView, ProductRetreiveDestroyView
 from backend.Views.price_view import PriceView, PriceListCreateView, PriceRetreiveDestroyView
-from backend.Views.subscription_view import SubscriptionView, SubscriptionListCreateView, SubscriptionRetreiveDestroyView
+from backend.Views.subscription_view import SubscriptionView, SubscriptionListCreateView, SubscriptionRetreiveDestroyView, SubscriptionListAPIView
 from backend.Views.payment_method_view import PaymentMethodView, PaymentListCreateView, PaymentRetreiveDestroyView
 
 managerView = ManagerView()
@@ -32,7 +32,7 @@ urlpatterns = [
 
     path("manager/signup/", managerView.signUp),
     path("manager/login/", managerView.login),
-    path("manager/updated_payment_method/", ManagerUpdateView.as_view()),
+    path("manager/update_payment_method/", ManagerUpdateView.as_view()),
     # path("manager/update_payment_method/", managerView.updatePaymentMethod),
     path("manager/remove_card_details/", managerView.removePaymentMethod),
     # path("manager/get_payment_methods/<str:managerId>", managerView.getAllPaymentMethods),
@@ -60,6 +60,7 @@ urlpatterns = [
     # path("payment_method/payment_intent/", paymentView.createPaymentIntent),
 
     path("subscriptions/", SubscriptionListCreateView.as_view()),
+    path("subscriptions/<str:customer_id>/", SubscriptionListAPIView.as_view()),
     path("subscriptions/<str:id>/", SubscriptionRetreiveDestroyView.as_view()),
     path("subscriptions/create/", subsView.createSubscription),
     path("subscriptions/get_available/<str:managerId>/", subsView.getAvailableSubscriptionsAndPrice),

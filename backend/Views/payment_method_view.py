@@ -10,7 +10,7 @@ import json
 from rest_framework import generics
 from ..Serializers.payment_method_serializer import PaymentMethodSerializer
 from rest_framework.permissions import IsAuthenticated
-from .mixin import ModelMixin
+from .mixin import ModelMixin, PermissionMixin
 
 class PaymentMethodView(View): 
 
@@ -126,7 +126,7 @@ class PaymentMethodView(View):
         )
         
 
-class PaymentListCreateView(generics.ListCreateAPIView): 
+class PaymentListCreateView(PermissionMixin, generics.ListCreateAPIView): 
     """
     Generic API View for POST and GET all methods for PaymentMethod
 
@@ -135,7 +135,6 @@ class PaymentListCreateView(generics.ListCreateAPIView):
     """ 
     queryset = PaymentMethod.objects.all()
     serializer_class = PaymentMethodSerializer
-    permission_classes = [IsAuthenticated]
 
     def post(self, request): 
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -172,12 +171,11 @@ class PaymentListCreateView(generics.ListCreateAPIView):
             content_type = "application/json"
         )
 
-class PaymentRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIView): 
+class PaymentRetreiveDestroyView(ModelMixin, PermissionMixin, generics.RetrieveUpdateDestroyAPIView): 
     """
     Generic API View for GET and DELETE methods for PaymentMethod
     Args:
         generics (Class): Generic API Class from Django Rest Framework
     """
-    permission_classes = [IsAuthenticated]
     queryset = PaymentMethod.objects.all()
     serializer_class = PaymentMethodSerializer

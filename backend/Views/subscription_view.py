@@ -9,8 +9,7 @@ from datetime import datetime
 import json
 from rest_framework import generics
 from ..Serializers.subscription_serializer import SubscriptionSerializer, SubscriptionCreateSerializer
-from rest_framework.permissions import IsAuthenticated
-from .mixin import ModelMixin
+from .mixin import ModelMixin, PermissionMixin
 
 
 class SubscriptionView(View): 
@@ -87,7 +86,7 @@ class SubscriptionView(View):
         )
 
 
-class SubscriptionListCreateView(generics.ListCreateAPIView):
+class SubscriptionListCreateView(PermissionMixin, generics.ListCreateAPIView):
     """
     Generic API View for POST and GET all methods for Subscription
 
@@ -96,7 +95,6 @@ class SubscriptionListCreateView(generics.ListCreateAPIView):
     """ 
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionCreateSerializer
-    permission_classes = [IsAuthenticated]
 
     def post(self, request): 
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -129,12 +127,14 @@ class SubscriptionListCreateView(generics.ListCreateAPIView):
             content_type="application/json"
         )
 
-class SubscriptionRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIView):
+class SubscriptionRetreiveDestroyView(ModelMixin, PermissionMixin, generics.RetrieveUpdateDestroyAPIView):
     """
     Generic API View for GET and DELETE methods for Subscription
     Args:
         generics (Class): Generic API Class from Django Rest Framework
     """
-    permission_classes = [IsAuthenticated]
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
+
+class SubscriptionListAPIView(PermissionMixin, generics.ListAPIView):
+    pass

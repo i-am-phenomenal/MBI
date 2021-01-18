@@ -10,7 +10,7 @@ import json
 from rest_framework import generics
 from ..Serializers.price_serializer import PriceSerializer
 from rest_framework.permissions import IsAuthenticated
-from .mixin import ModelMixin
+from .mixin import ModelMixin, PermissionMixin
 
 class PriceView(View):
 
@@ -89,7 +89,7 @@ class PriceView(View):
             return response
         
 
-class PriceListCreateView(generics.ListCreateAPIView):
+class PriceListCreateView(PermissionMixin, generics.ListCreateAPIView):
     """
     Generic API View for POST and GET all methods for Price
 
@@ -97,7 +97,6 @@ class PriceListCreateView(generics.ListCreateAPIView):
         generics (Class): Generic API Class
     """
     queryset = Price.objects.all()
-    permission_classes = [IsAuthenticated]
     serializer_class = PriceSerializer
 
     def post(self, request): 
@@ -132,12 +131,11 @@ class PriceListCreateView(generics.ListCreateAPIView):
             content_type="application/json"
         )
 
-class PriceRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIView): 
+class PriceRetreiveDestroyView(ModelMixin, PermissionMixin, generics.RetrieveUpdateDestroyAPIView): 
     """
     Generic API View for GET and DELETE methods for Price
     Args:
         generics (Class): Generic API Class from Django Rest Framework
     """
-    permission_classes = [IsAuthenticated]
     queryset = Price.objects.all()
     serializer_class = PriceSerializer
