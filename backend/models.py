@@ -30,7 +30,7 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
     isActive = models.BooleanField(default=False, db_column="is_active")
     isSuperuser = models.BooleanField(default=False, db_column="is_superuser")
     
-    insertedAt = models.DateTimeField(db_column="inserted_at")
+    insertedAt = models.DateTimeField(auto_now=True, db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
 
     USERNAME_FIELD = 'emailId'

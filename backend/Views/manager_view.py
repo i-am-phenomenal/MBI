@@ -11,6 +11,9 @@ from ..authentication_utils import AuthenticationUtils
 from rest_framework.authtoken.models import Token 
 import stripe
 from django.conf import settings
+from rest_framework import generics
+from ..Serializers.manager_serializer import ManagerSerializer
+from rest_framework.permissions import AllowAny
 # Create your views here.
 
 class ManagerView(View):
@@ -205,3 +208,28 @@ class ManagerView(View):
             ),
             content_type="application/json"
         )
+
+class ManagerMixin: 
+    queryset = Manager.objects.all()
+    lookup_field = "id"
+
+class ManagerListCreateView(generics.ListCreateAPIView):
+    """
+    Generic API View for POST and GET all methods for Manager
+
+    Args:
+        generics (Class): Generic API Class
+    """
+    queryset = Manager.objects.all()
+    serializer_class = ManagerSerializer
+
+class ManagerRetreiveDestroyView(ManagerMixin, generics.RetrieveUpdateDestroyAPIView): 
+    """
+    Generic API View for GET and DELETE methods for Manager
+    Args:
+        DealerMixin (Class): Mixin Class to set the lookup field to id 
+        generics (Class): Generic API Class
+    """
+    permission_classes = [AllowAny]
+    queryset = Manager.objects.all()
+    serializer_class = ManagerSerializer

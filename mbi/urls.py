@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from backend.Views.manager_view import ManagerView
+from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView
 from backend.Views.product_view import ProductView
 from backend.Views.price_view import PriceView
 from backend.Views.subscription_view import SubscriptionView
@@ -30,6 +30,8 @@ paymentView = PaymentMethodView()
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    path("manager/", ManagerListCreateView.as_view()),
+    path("manager/<str:id>/", ManagerRetreiveDestroyView.as_view()),
     path("manager/signup/", managerView.signUp),
     path("manager/login/", managerView.login),
     path("manager/update_payment_method/", managerView.updatePaymentMethod),
