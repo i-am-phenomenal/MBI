@@ -9,6 +9,7 @@ from datetime import datetime
 from rest_framework import generics
 from ..Serializers.product_serializer import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
+from .mixin import ModelMixin
 
 class ProductView(View): 
 
@@ -33,7 +34,13 @@ class ProductView(View):
         return HttpResponse("Ok")
 
 
-class ProductListCreateView(generics.ListCreateAPIView): 
+class ProductListCreateView(generics.ListCreateAPIView):
+    """
+    Generic API View for POST and GET all methods for Product
+
+    Args:
+        generics (Class): Generic API Class
+    """ 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
@@ -54,7 +61,7 @@ class ProductListCreateView(generics.ListCreateAPIView):
         )
         return HttpResponse(json.dumps(resp), content_type="application/json")
 
-class ProductRetreiveDestroyView(generics.RetrieveUpdateDestroyAPIView): 
+class ProductRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIView): 
     """
     Generic API View for GET and DELETE methods for Product
     Args:
@@ -63,4 +70,3 @@ class ProductRetreiveDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    lookup_field = "id"

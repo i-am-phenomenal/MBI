@@ -7,7 +7,7 @@ class PriceSerializer(serializers.ModelSerializer):
     billingScheme = serializers.CharField(max_length=20)
     interval = serializers.CharField(max_length=10)
     intervalCount = serializers.IntegerField()
-    product = serializers.ReadOnlyField()
+    product_id = serializers.ReadOnlyField()
 
     class Meta: 
         model = Price
@@ -16,10 +16,10 @@ class PriceSerializer(serializers.ModelSerializer):
             "unitAmount",
             "billingScheme", 
             "interval",
-            "intervalCount"
+            "intervalCount",
             "insertedAt",
             "updatedAt",
-            "product",
+            "product_id",
         ]
         extra_kwargs = {
             "insertedAt": {

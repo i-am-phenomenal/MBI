@@ -10,6 +10,7 @@ import json
 from rest_framework import generics
 from ..Serializers.price_serializer import PriceSerializer
 from rest_framework.permissions import IsAuthenticated
+from .mixin import ModelMixin
 
 class PriceView(View):
 
@@ -89,6 +90,54 @@ class PriceView(View):
         
 
 class PriceListCreateView(generics.ListCreateAPIView):
+    """
+    Generic API View for POST and GET all methods for Price
+
+    Args:
+        generics (Class): Generic API Class
+    """
+    queryset = Price.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = PriceSerializer
+
+    def post(self, request): 
+        params = helpers.getRequestParams(request)
+        stripe.api_key = settings.STRIPE_SECRET_KEY 
+        try:
+            resp =  stripe.Price.create(
+                unit_amount=params["unitAmount"],
+                currency=params["currency"],
+                recurring = {
+                    "interval": params["interval"]
+                },
+                product= params["productId"]
+            )
+        except Exception as e: 
+            print(e)
+        Price.objects.create(
+            id = resp["id"],
+            product = Product.objects.get(id=resp["product"]),
+            currency = resp["currency"],
+            unitAmount = resp["unit_amount"],
+            intervalCount = resp["recurring"]["interval_count"],
+            insertedAt = datetime.now()
+        )
+        return HttpResponse(
+            json.dumps(
+                {
+                    "message": "Created Price successfully.",
+                    "details": resp
+                }
+            ),
+            content_type="application/json"
+        )
+
+class PriceRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIView): 
+    """
+    Generic API View for GET and DELETE methods for Price
+    Args:
+        generics (Class): Generic API Class from Django Rest Framework
+    """
+    permission_classes = [IsAuthenticated]
     queryset = Price.objects.all()
     serializer_class = PriceSerializer
-    permission_classes = [IsAuthenticated]

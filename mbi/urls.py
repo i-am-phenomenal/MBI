@@ -17,9 +17,9 @@ from django.contrib import admin
 from django.urls import path
 from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView
 from backend.Views.product_view import ProductView, ProductListCreateView, ProductRetreiveDestroyView
-from backend.Views.price_view import PriceView, PriceListCreateView
+from backend.Views.price_view import PriceView, PriceListCreateView, PriceRetreiveDestroyView
 from backend.Views.subscription_view import SubscriptionView
-from backend.Views.payment_method_view import PaymentMethodView
+from backend.Views.payment_method_view import PaymentMethodView, PaymentListCreateView, PaymentRetreiveDestroyView
 
 managerView = ManagerView()
 productView = ProductView()
@@ -45,10 +45,13 @@ urlpatterns = [
     # path("product/create/", productView.createProduct),
 
     path("price/", PriceListCreateView.as_view()),
+    path("price/<str:id>", PriceRetreiveDestroyView.as_view()),
     path("price/create/", priceView.createPrice),
     path("price/get_all/", priceView.getAllPrices),
     path("price/delete/", priceView.deletePriceById),
 
+    path("payment_method/", PaymentListCreateView.as_view()),
+    path("payment_method/<str:id>/", PaymentRetreiveDestroyView.as_view()),
     path("payment_method/create/", paymentView.createPaymentMethod),
     path("payment_method/get_card_details/<str:managerId>/", paymentView.getCardDetails),
     path("payment_method/setup_intent/", paymentView.setupPaymentIntent),

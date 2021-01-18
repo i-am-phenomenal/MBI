@@ -14,6 +14,7 @@ from django.conf import settings
 from rest_framework import generics
 from ..Serializers.manager_serializer import ManagerSerializer
 from rest_framework.permissions import AllowAny
+from .mixin import ModelMixin
 # Create your views here.
 
 class ManagerView(View):
@@ -209,10 +210,6 @@ class ManagerView(View):
             content_type="application/json"
         )
 
-class ManagerMixin: 
-    queryset = Manager.objects.all()
-    lookup_field = "id"
-
 class ManagerListCreateView(generics.ListCreateAPIView):
     """
     Generic API View for POST and GET all methods for Manager
@@ -223,7 +220,7 @@ class ManagerListCreateView(generics.ListCreateAPIView):
     queryset = Manager.objects.all()
     serializer_class = ManagerSerializer
 
-class ManagerRetreiveDestroyView(ManagerMixin, generics.RetrieveUpdateDestroyAPIView): 
+class ManagerRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIView): 
     """
     Generic API View for GET and DELETE methods for Manager
     Args:

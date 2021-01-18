@@ -7,6 +7,10 @@ from .. import helpers
 from ..models import *
 from datetime import datetime
 import json
+from rest_framework import generics
+from ..Serializers.payment_method_serializer import PaymentMethodSerializer
+from rest_framework.permissions import IsAuthenticated
+from .mixin import ModelMixin
 
 class PaymentMethodView(View): 
 
@@ -121,3 +125,59 @@ class PaymentMethodView(View):
             content_type="application/json"
         )
         
+
+class PaymentListCreateView(generics.ListCreateAPIView): 
+    """
+    Generic API View for POST and GET all methods for PaymentMethod
+
+    Args:
+        generics (Class): Generic API Class
+    """ 
+    queryset = PaymentMethod.objects.all()
+    serializer_class = PaymentMethodSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request): 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        params = helpers.getRequestParams(request)
+        try: 
+            resp = stripe.PaymentMethod.create(
+                type="card",
+                card={
+                    "number": params["cardNumber"].strip(),
+                    "exp_month": params["expiryMonth"],
+                    "exp_year": params["expiryYear"],
+                    "cvc": params["cvv"],
+                }
+            )
+        except Exception as e: 
+            print(e)
+            return helpers.getBadResponse("There was an error while creating Payment. Please try again later", 500)
+        
+        PaymentMethod.objects.create(
+            id = resp["id"],
+            cardNumber = params["cardNumber"],
+            expiryMonth = params["expiryMonth"],
+            expiryYear = params["expiryYear"],
+            cvv = params["cvv"],
+            insertedAt = datetime.now()
+        )
+        return HttpResponse(
+            json.dumps(
+                {
+                    "Message": "Payment method created successfully",
+                    "Details" : resp
+                }
+            ),
+            content_type = "application/json"
+        )
+
+class PaymentRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIView): 
+    """
+    Generic API View for GET and DELETE methods for PaymentMethod
+    Args:
+        generics (Class): Generic API Class from Django Rest Framework
+    """
+    permission_classes = [IsAuthenticated]
+    queryset = PaymentMethod.objects.all()
+    serializer_class = PaymentMethodSerializer
