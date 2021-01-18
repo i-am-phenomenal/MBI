@@ -60,7 +60,7 @@ urlpatterns = [
     # path("payment_method/payment_intent/", paymentView.createPaymentIntent),
 
     path("subscriptions/", SubscriptionListCreateView.as_view()),
-    path("subscriptions/<str:customer_id>/", SubscriptionListAPIView.as_view()),
+    path("subscriptions/get_all/", SubscriptionListAPIView.as_view()),
     path("subscriptions/<str:id>/", SubscriptionRetreiveDestroyView.as_view()),
     path("subscriptions/create/", subsView.createSubscription),
     path("subscriptions/get_available/<str:managerId>/", subsView.getAvailableSubscriptionsAndPrice),

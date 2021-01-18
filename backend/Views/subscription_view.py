@@ -8,7 +8,7 @@ from ..models import *
 from datetime import datetime
 import json
 from rest_framework import generics
-from ..Serializers.subscription_serializer import SubscriptionSerializer, SubscriptionCreateSerializer
+from ..Serializers.subscription_serializer import SubscriptionSerializer, SubscriptionCreateSerializer, SubscriptionListAPISerializer
 from .mixin import ModelMixin, PermissionMixin
 
 
@@ -137,4 +137,10 @@ class SubscriptionRetreiveDestroyView(ModelMixin, PermissionMixin, generics.Retr
     serializer_class = SubscriptionSerializer
 
 class SubscriptionListAPIView(PermissionMixin, generics.ListAPIView):
-    pass
+    """
+    Generic API View for List API for Subscription
+    Args:
+        generics (Class): Generic API Class from Django Rest Framework
+    """
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionListAPISerializer

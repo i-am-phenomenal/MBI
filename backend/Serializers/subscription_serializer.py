@@ -3,6 +3,7 @@ from ..models import Subscription
 from .manager_serializer import ManagerSerializer
 from .price_serializer import PriceSerializer
 
+
 class SubscriptionCreateSerializer(serializers.ModelSerializer): 
     customerId = serializers.CharField(max_length=50)
     priceId = serializers.CharField(max_length=50)
@@ -30,3 +31,14 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                 'required': False
             },
         }
+
+class SubscriptionListAPISerializer(serializers.ModelSerializer): 
+    id = serializers.CharField(max_length=20)
+    price = PriceSerializer(many=False)
+
+    class Meta: 
+        model = Subscription
+        fields = [
+            "id",
+            "price",
+        ]
