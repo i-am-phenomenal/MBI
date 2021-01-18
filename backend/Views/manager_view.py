@@ -276,3 +276,15 @@ class ManagerUpdateView(generics.UpdateAPIView):
             ),
             content_type="application/json"
         )
+
+class ManagerRetreivePaymentMethod(generics.RetrieveAPIView): 
+    """
+    View class for GET for Manager's payment method
+
+    Args:
+        generics (Class): Generic API Class
+    """
+    queryset = Manager.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ManagerSerializer
+    lookup_field = "id"

@@ -1,11 +1,13 @@
 from rest_framework import serializers 
 from ..models import Manager
+from .payment_method_serializer import PaymentMethodSerializer
 
 
 class ManagerSerializer(serializers.ModelSerializer): 
     emailId = serializers.CharField(max_length=50)
     firstName = serializers.CharField(max_length=50)
     lastName = serializers.CharField(max_length=50)
+    cardDetails = PaymentMethodSerializer(many=False)
     password = serializers.CharField(max_length=200)
     dateOfBirth = serializers.DateField()
     company = serializers.CharField(max_length=50)
@@ -17,6 +19,7 @@ class ManagerSerializer(serializers.ModelSerializer):
             "lastName",
             "emailId",
             "password",
+            "cardDetails",
             "dateOfBirth",
             "company",
             "insertedAt",
@@ -37,4 +40,15 @@ class ManagerSerializer(serializers.ModelSerializer):
 class ManagerUpdateSerializer(serializers.ModelSerializer): 
     managerId = serializers.CharField(max_length=50)
     paymentMethodId = serializers.CharField(max_length=50)
+
+# class ManagerGetPaymentMethodSerializer(serializers.ModelSerializer): 
+#     managerId = serializers.CharField(max_length=50)
+#     cardDetails = PaymentMethodSerializer(many=False)
+
+#     class Meta:
+#         model = Manager
+#         fields = [
+#             "managerId",
+#             "cardDetails"
+#         ]
     

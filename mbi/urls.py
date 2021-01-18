@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView, ManagerUpdateView
+from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView, ManagerUpdateView, ManagerRetreivePaymentMethod
 from backend.Views.product_view import ProductView, ProductListCreateView, ProductRetreiveDestroyView
 from backend.Views.price_view import PriceView, PriceListCreateView, PriceRetreiveDestroyView
 from backend.Views.subscription_view import SubscriptionView, SubscriptionListCreateView, SubscriptionRetreiveDestroyView
@@ -35,7 +35,8 @@ urlpatterns = [
     path("manager/updated_payment_method/", ManagerUpdateView.as_view()),
     # path("manager/update_payment_method/", managerView.updatePaymentMethod),
     path("manager/remove_card_details/", managerView.removePaymentMethod),
-    path("manager/get_payment_methods/<str:managerId>", managerView.getAllPaymentMethods),
+    # path("manager/get_payment_methods/<str:managerId>", managerView.getAllPaymentMethods),
+    path("manager/get_payment_method/<str:managerId>/", ManagerRetreivePaymentMethod.as_view()),
     path("manager/add_default_payment/", managerView.addDefaultPaymentMethod),
     path("manager/get_details/", managerView.getManagerDetailsByToken),
     path("manager/", ManagerListCreateView.as_view()),
@@ -53,10 +54,10 @@ urlpatterns = [
 
     path("payment_method/", PaymentListCreateView.as_view()),
     path("payment_method/<str:id>/", PaymentRetreiveDestroyView.as_view()),
-    path("payment_method/create/", paymentView.createPaymentMethod),
-    path("payment_method/get_card_details/<str:managerId>/", paymentView.getCardDetails),
-    path("payment_method/setup_intent/", paymentView.setupPaymentIntent),
-    path("payment_method/payment_intent/", paymentView.createPaymentIntent),
+    # path("payment_method/create/", paymentView.createPaymentMethod),
+    # path("payment_method/get_card_details/<str:managerId>/", paymentView.getCardDetails),
+    # path("payment_method/setup_intent/", paymentView.setupPaymentIntent),
+    # path("payment_method/payment_intent/", paymentView.createPaymentIntent),
 
     path("subscriptions/", SubscriptionListCreateView.as_view()),
     path("subscriptions/<str:id>/", SubscriptionRetreiveDestroyView.as_view()),
