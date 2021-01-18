@@ -13,7 +13,7 @@ import stripe
 from django.conf import settings
 from rest_framework import generics
 from ..Serializers.manager_serializer import ManagerSerializer
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .mixin import ModelMixin
 # Create your views here.
 
@@ -230,3 +230,49 @@ class ManagerRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIVi
     permission_classes = [AllowAny]
     queryset = Manager.objects.all()
     serializer_class = ManagerSerializer
+
+class ManagerUpdateView(generics.UpdateAPIView): 
+    """
+    Generic API View for Update methods for Manager
+    Args:
+        DealerMixin (Class): Mixin Class to set the lookup field to id 
+        generics (Class): Generic API Class
+    """
+    permission_classes = [IsAuthenticated]
+    queryset = Manager.objects.all()
+    serializer_class = ManagerSerializer
+
+    def put(self, request):
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        params = helpers.getRequestParams(request)
+
+        try:
+            resp = stripe.PaymentMethod.attach(
+                params["paymentMethodId"],
+                customer=params["managerId"],
+            )
+            stripe.Customer.modify(
+                params["managerId"],
+                invoice_settings=
+                {
+                    "default_payment_method": params["paymentMethodId"]
+                },
+            )
+        except Exception as e: 
+            print(e)
+            return helpers.getBadResponse("There was an error in adding card details. Please try again later.", 500)
+        
+        managerObject = Manager.objects.get(id=params["managerId"])
+        paymentMethodObject = PaymentMethod.objects.get(id=params["paymentMethodId"])
+        managerObject.cardDetails = paymentMethodObject
+        managerObject.save()
+
+        return HttpResponse(
+            json.dumps(
+                {
+                    "Message": "Updated card details successfully",
+                    "manager": resp
+                }
+            ),
+            content_type="application/json"
+        )

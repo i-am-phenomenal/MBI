@@ -32,3 +32,9 @@ class ManagerSerializer(serializers.ModelSerializer):
                 'required': False
             },
         }
+
+
+class ManagerUpdateSerializer(serializers.ModelSerializer): 
+    managerId = serializers.CharField(max_length=50)
+    paymentMethodId = serializers.CharField(max_length=50)
+    

@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView
+from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView, ManagerUpdateView
 from backend.Views.product_view import ProductView, ProductListCreateView, ProductRetreiveDestroyView
 from backend.Views.price_view import PriceView, PriceListCreateView, PriceRetreiveDestroyView
-from backend.Views.subscription_view import SubscriptionView
+from backend.Views.subscription_view import SubscriptionView, SubscriptionListCreateView, SubscriptionRetreiveDestroyView
 from backend.Views.payment_method_view import PaymentMethodView, PaymentListCreateView, PaymentRetreiveDestroyView
 
 managerView = ManagerView()
@@ -32,7 +32,8 @@ urlpatterns = [
 
     path("manager/signup/", managerView.signUp),
     path("manager/login/", managerView.login),
-    path("manager/update_payment_method/", managerView.updatePaymentMethod),
+    path("manager/updated_payment_method/", ManagerUpdateView.as_view()),
+    # path("manager/update_payment_method/", managerView.updatePaymentMethod),
     path("manager/remove_card_details/", managerView.removePaymentMethod),
     path("manager/get_payment_methods/<str:managerId>", managerView.getAllPaymentMethods),
     path("manager/add_default_payment/", managerView.addDefaultPaymentMethod),
@@ -42,7 +43,7 @@ urlpatterns = [
 
     path("product/", ProductListCreateView.as_view()),
     path("product/<str:id>/", ProductRetreiveDestroyView.as_view()),
-    # path("product/create/", productView.createProduct),
+    path("product/create/", productView.createProduct),
 
     path("price/", PriceListCreateView.as_view()),
     path("price/<str:id>", PriceRetreiveDestroyView.as_view()),
@@ -57,6 +58,8 @@ urlpatterns = [
     path("payment_method/setup_intent/", paymentView.setupPaymentIntent),
     path("payment_method/payment_intent/", paymentView.createPaymentIntent),
 
+    path("subscriptions/", SubscriptionListCreateView.as_view()),
+    path("subscriptions/<str:id>/", SubscriptionRetreiveDestroyView.as_view()),
     path("subscriptions/create/", subsView.createSubscription),
     path("subscriptions/get_available/<str:managerId>/", subsView.getAvailableSubscriptionsAndPrice),
     path("subscriptions/delete/", subsView.removeSubscription)

@@ -7,6 +7,10 @@ from .. import helpers
 from ..models import *
 from datetime import datetime
 import json
+from rest_framework import generics
+from ..Serializers.subscription_serializer import SubscriptionSerializer, SubscriptionCreateSerializer
+from rest_framework.permissions import IsAuthenticated
+from .mixin import ModelMixin
 
 
 class SubscriptionView(View): 
@@ -81,3 +85,56 @@ class SubscriptionView(View):
             ),
             content_type="application/json"
         )
+
+
+class SubscriptionListCreateView(generics.ListCreateAPIView):
+    """
+    Generic API View for POST and GET all methods for Subscription
+
+    Args:
+        generics (Class): Generic API Class
+    """ 
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request): 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        params = helpers.getRequestParams(request)
+        try: 
+            resp = stripe.Subscription.create(
+                customer=params["customerId"],
+                items=[
+                    {"price": params["priceId"]},
+                ]
+            )
+            print(resp)
+        except Exception as e: 
+            print(e)
+            return helpers.getBadResponse(str(e), 500)
+
+        Subscription.objects.create(
+            id= resp["id"],
+            customer = Manager.objects.get(id=params["customerId"]),
+            price_id = params["priceId"],
+            insertedAt = datetime.now()
+        )
+        return HttpResponse(
+            json.dumps(
+                {
+                    "message": "Create Sbscription successfully",
+                    "subscription": resp
+                }
+            ),
+            content_type="application/json"
+        )
+
+class SubscriptionRetreiveDestroyView(ModelMixin, generics.RetrieveUpdateDestroyAPIView):
+    """
+    Generic API View for GET and DELETE methods for Subscription
+    Args:
+        generics (Class): Generic API Class from Django Rest Framework
+    """
+    permission_classes = [IsAuthenticated]
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
