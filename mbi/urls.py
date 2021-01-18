@@ -36,7 +36,7 @@ urlpatterns = [
     # path("manager/update_payment_method/", managerView.updatePaymentMethod),
     path("manager/remove_card_details/", managerView.removePaymentMethod),
     # path("manager/get_payment_methods/<str:managerId>", managerView.getAllPaymentMethods),
-    path("manager/get_payment_method/<str:managerId>/", ManagerRetreivePaymentMethod.as_view()),
+    path("manager/get_payment_method/<str:id>/", ManagerRetreivePaymentMethod.as_view()),
     path("manager/add_default_payment/", managerView.addDefaultPaymentMethod),
     path("manager/get_details/", managerView.getManagerDetailsByToken),
     path("manager/", ManagerListCreateView.as_view()),

@@ -7,7 +7,6 @@ class ManagerSerializer(serializers.ModelSerializer):
     emailId = serializers.CharField(max_length=50)
     firstName = serializers.CharField(max_length=50)
     lastName = serializers.CharField(max_length=50)
-    cardDetails = PaymentMethodSerializer(many=False)
     password = serializers.CharField(max_length=200)
     dateOfBirth = serializers.DateField()
     company = serializers.CharField(max_length=50)
@@ -19,7 +18,6 @@ class ManagerSerializer(serializers.ModelSerializer):
             "lastName",
             "emailId",
             "password",
-            "cardDetails",
             "dateOfBirth",
             "company",
             "insertedAt",
@@ -41,14 +39,14 @@ class ManagerUpdateSerializer(serializers.ModelSerializer):
     managerId = serializers.CharField(max_length=50)
     paymentMethodId = serializers.CharField(max_length=50)
 
-# class ManagerGetPaymentMethodSerializer(serializers.ModelSerializer): 
-#     managerId = serializers.CharField(max_length=50)
-#     cardDetails = PaymentMethodSerializer(many=False)
+class ManagerGetPaymentMethodSerializer(serializers.ModelSerializer): 
+    id = serializers.CharField(max_length=50)
+    cardDetails = PaymentMethodSerializer(many=False)
 
-#     class Meta:
-#         model = Manager
-#         fields = [
-#             "managerId",
-#             "cardDetails"
-#         ]
+    class Meta:
+        model = Manager
+        fields = [
+            "id",
+            "cardDetails",
+        ]
     

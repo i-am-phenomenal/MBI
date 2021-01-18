@@ -12,7 +12,7 @@ from rest_framework.authtoken.models import Token
 import stripe
 from django.conf import settings
 from rest_framework import generics
-from ..Serializers.manager_serializer import ManagerSerializer
+from ..Serializers.manager_serializer import ManagerSerializer, ManagerGetPaymentMethodSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .mixin import ModelMixin
 # Create your views here.
@@ -286,5 +286,5 @@ class ManagerRetreivePaymentMethod(generics.RetrieveAPIView):
     """
     queryset = Manager.objects.all()
     permission_classes = [IsAuthenticated]
-    serializer_class = ManagerSerializer
+    serializer_class = ManagerGetPaymentMethodSerializer
     lookup_field = "id"
