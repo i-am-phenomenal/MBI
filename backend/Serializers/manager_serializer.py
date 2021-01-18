@@ -7,6 +7,7 @@ class ManagerSerializer(serializers.ModelSerializer):
     firstName = serializers.CharField(max_length=50)
     lastName = serializers.CharField(max_length=50)
     password = serializers.CharField(max_length=200)
+    dateOfBirth = serializers.DateField()
     company = serializers.CharField(max_length=50)
 
     class Meta: 
@@ -16,6 +17,7 @@ class ManagerSerializer(serializers.ModelSerializer):
             "lastName",
             "emailId",
             "password",
+            "dateOfBirth",
             "company",
             "insertedAt",
             "updatedAt"

@@ -6,7 +6,9 @@ from .. import decorators
 from .. import helpers
 from ..models import *
 from datetime import datetime
-
+from rest_framework import generics
+from ..Serializers.product_serializer import ProductSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class ProductView(View): 
 
@@ -28,4 +30,14 @@ class ProductView(View):
             )
         except Exception as e: 
             print(e)
+        return HttpResponse("Ok")
+
+
+class ProductListCreateView(generics.ListCreateAPIView): 
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer): 
+        print(serializer)
         return HttpResponse("Ok")

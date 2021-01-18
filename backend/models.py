@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from .my_manager import MyManager
 
 # Create your models here.
 
@@ -35,6 +36,8 @@ class Manager(AbstractBaseUser,PermissionsMixin, models.Model):
 
     USERNAME_FIELD = 'emailId'
     REQUIRED_FIELDS = ('password', 'company', "dateOfBirth")
+
+    objects = MyManager()
 
     def get_short_name(self):
         return self.emailId

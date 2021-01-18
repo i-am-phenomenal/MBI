@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView
-from backend.Views.product_view import ProductView
+from backend.Views.product_view import ProductView, ProductListCreateView
 from backend.Views.price_view import PriceView
 from backend.Views.subscription_view import SubscriptionView
 from backend.Views.payment_method_view import PaymentMethodView
@@ -30,8 +30,6 @@ paymentView = PaymentMethodView()
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path("manager/", ManagerListCreateView.as_view()),
-    path("manager/<str:id>/", ManagerRetreiveDestroyView.as_view()),
     path("manager/signup/", managerView.signUp),
     path("manager/login/", managerView.login),
     path("manager/update_payment_method/", managerView.updatePaymentMethod),
@@ -39,8 +37,11 @@ urlpatterns = [
     path("manager/get_payment_methods/<str:managerId>", managerView.getAllPaymentMethods),
     path("manager/add_default_payment/", managerView.addDefaultPaymentMethod),
     path("manager/get_details/", managerView.getManagerDetailsByToken),
+    path("manager/", ManagerListCreateView.as_view()),
+    path("manager/<str:id>/", ManagerRetreiveDestroyView.as_view()),
 
-    path("product/create/", productView.createProduct),
+    path("product/", ProductListCreateView.as_view()),
+    # path("product/create/", productView.createProduct),
 
     path("price/create/", priceView.createPrice),
     path("price/get_all/", priceView.getAllPrices),
