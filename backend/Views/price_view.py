@@ -7,6 +7,9 @@ from .. import helpers
 from ..models import *
 from datetime import datetime
 import json
+from rest_framework import generics
+from ..Serializers.price_serializer import PriceSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class PriceView(View):
 
@@ -85,3 +88,7 @@ class PriceView(View):
             return response
         
 
+class PriceListCreateView(generics.ListCreateAPIView):
+    queryset = Price.objects.all()
+    serializer_class = PriceSerializer
+    permission_classes = [IsAuthenticated]

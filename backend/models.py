@@ -75,6 +75,9 @@ class Product(models.Model):
     insertedAt = models.DateTimeField(auto_now=True, db_column="inserted_at")
     updatedAt = models.DateTimeField(auto_now=True, db_column="updated_at")
 
+    def __str__(self): 
+        return self.productName
+
 class Price(models.Model):
     id = models.CharField(max_length=100, primary_key=True, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

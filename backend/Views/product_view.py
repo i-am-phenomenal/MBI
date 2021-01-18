@@ -8,7 +8,7 @@ from ..models import *
 from datetime import datetime
 from rest_framework import generics
 from ..Serializers.product_serializer import ProductSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 class ProductView(View): 
 
@@ -43,16 +43,16 @@ class ProductListCreateView(generics.ListCreateAPIView):
         stripe.api_key = settings.STRIPE_SECRET_KEY 
         try: 
             resp = stripe.Product.create(
-                name= params["name"]
-            )
-            Product.objects.create(
-                id = resp["id"],
-                productName = resp["name"],
-                insertedAt = datetime.now()
+                name= params["productName"]
             )
         except Exception as e: 
-            print(e)
-        return HttpResponse("Ok")
+            print("EXCEPTION -> ", e)
+        Product.objects.create(
+            id = resp["id"],
+            productName = resp["name"],
+            insertedAt = datetime.now()
+        )
+        return HttpResponse(json.dumps(resp), content_type="application/json")
 
 class ProductRetreiveDestroyView(generics.RetrieveUpdateDestroyAPIView): 
     """

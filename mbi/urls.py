@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from backend.Views.manager_view import ManagerView, ManagerListCreateView, ManagerRetreiveDestroyView
 from backend.Views.product_view import ProductView, ProductListCreateView, ProductRetreiveDestroyView
-from backend.Views.price_view import PriceView
+from backend.Views.price_view import PriceView, PriceListCreateView
 from backend.Views.subscription_view import SubscriptionView
 from backend.Views.payment_method_view import PaymentMethodView
 
@@ -44,6 +44,7 @@ urlpatterns = [
     path("product/<str:id>/", ProductRetreiveDestroyView.as_view()),
     # path("product/create/", productView.createProduct),
 
+    path("price/", PriceListCreateView.as_view()),
     path("price/create/", priceView.createPrice),
     path("price/get_all/", priceView.getAllPrices),
     path("price/delete/", priceView.deletePriceById),
