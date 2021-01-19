@@ -54,16 +54,16 @@ urlpatterns = [
 
     path("payment_method/", PaymentListCreateView.as_view()),
     path("payment_method/<str:id>/", PaymentRetreiveDestroyView.as_view()),
-    # path("payment_method/create/", paymentView.createPaymentMethod),
-    # path("payment_method/get_card_details/<str:managerId>/", paymentView.getCardDetails),
-    # path("payment_method/setup_intent/", paymentView.setupPaymentIntent),
-    # path("payment_method/payment_intent/", paymentView.createPaymentIntent),
+    path("payment_method/create/", paymentView.createPaymentMethod),
+    path("payment_method/get_card_details/<str:managerId>/", paymentView.getCardDetails),
+    path("payment_method/setup_intent/", paymentView.setupPaymentIntent),
+    path("payment_method/payment_intent/", paymentView.createPaymentIntent),
 
     path("subscriptions/", SubscriptionListCreateView.as_view()),
-    path("subscriptions/get_all/", SubscriptionListAPIView.as_view()),
+    path("subscriptions/get_all/<str:customer_id>/", SubscriptionListAPIView.as_view()),
     path("subscriptions/<str:id>/", SubscriptionRetreiveDestroyView.as_view()),
     path("subscriptions/create/", subsView.createSubscription),
     path("subscriptions/get_available/<str:managerId>/", subsView.getAvailableSubscriptionsAndPrice),
-    path("subscriptions/delete/", subsView.removeSubscription)
+    path("subscriptions/delete/<str:id>/", SubscriptionRetreiveDestroyView.as_view())
 
 ]

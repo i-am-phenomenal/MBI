@@ -131,6 +131,27 @@ class PriceListCreateView(PermissionMixin, generics.ListCreateAPIView):
             content_type="application/json"
         )
 
+    def get(self, request): 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        prices = stripe.Price.list(limit=10)["data"]
+        formatted = [
+            {
+                "priceId": price["id"],
+                "currency": price["currency"],
+                "interval": price["recurring"]["interval"],
+                "intervalCount": price["recurring"]["interval_count"],
+                "product": helpers.getFormattedProductDetails(stripe.Product.retrieve(price["product"])),
+                "unitAmount": price["unit_amount"]
+            }
+            for price in prices
+        ]
+        helpers.populateProductIfDoesNotExist(formatted)
+        helpers.populatePricesIfDoesNotExist(formatted)
+        return HttpResponse(
+            json.dumps(formatted),
+            content_type="application/json"
+        )
+
 class PriceRetreiveDestroyView(ModelMixin, PermissionMixin, generics.RetrieveUpdateDestroyAPIView): 
     """
     Generic API View for GET and DELETE methods for Price
@@ -139,3 +160,4 @@ class PriceRetreiveDestroyView(ModelMixin, PermissionMixin, generics.RetrieveUpd
     """
     queryset = Price.objects.all()
     serializer_class = PriceSerializer
+    

@@ -136,11 +136,33 @@ class SubscriptionRetreiveDestroyView(ModelMixin, PermissionMixin, generics.Retr
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
 
+    def delete(self, request, id): 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        try: 
+            resp = stripe.Subscription.delete(id)
+            print(resp)
+        except Exception as e: 
+            print(e)
+            return HttpResponse(str(e), 500)
+
+        subscriptionObject = Subscription.objects.get(id=id)
+        subscriptionObject.delete()
+        return HttpResponse(
+            json.dumps(
+                {
+                    "message": "The user has been unsubscribed from the plan."
+                }
+            ),
+            content_type="application/json"
+        )
+
+
 class SubscriptionListAPIView(PermissionMixin, generics.ListAPIView):
     """
-    Generic API View for List API for Subscription
+    Generic API View for List API for Subscriptions belonging to a customer
     Args:
         generics (Class): Generic API Class from Django Rest Framework
     """
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionListAPISerializer
+    lookup_field = "customer_id"

@@ -42,3 +42,14 @@ class SubscriptionListAPISerializer(serializers.ModelSerializer):
             "id",
             "price",
         ]
+
+class ManagerSubscriptionSerializer(serializers.ModelSerializer): 
+    customer_id = serializers.CharField(max_length=20)
+    price = PriceSerializer(many=False)
+
+    class Meta: 
+        model = Subscription
+        fields = [
+            "customer_id",
+            "price"
+        ]
