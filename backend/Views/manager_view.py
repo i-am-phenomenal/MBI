@@ -57,12 +57,6 @@ class ManagerView(View):
             status=200
         )
 
-
-    # @decorators.validateRequestContentType
-    # @decorators.validateHttpMethod
-    # @decorators.validateFieldsForLogin
-    # @decorators.checkIfEmailPresent
-    # @decorators.checkIfValidCreds
     def login(self, request): 
         params = helpers.getRequestParams(request)
         authenticationUtils = AuthenticationUtils()
@@ -82,121 +76,6 @@ class ManagerView(View):
             status=200
         )
 
-    def addPaymentMethod(self, request): 
-        pass
-
-    # @decorators.validateRequestContentType
-    # @decorators.validateIfPUTMethod
-    # @decorators.validateIfAuthTokenPresent
-    # @decorators.checkIfTokenExists
-    # @decorators.validateFieldsForCardDetails
-    # @decorators.checkIfManagerExists
-    # @decorators.checkIfCardDetailsExists
-    # def updatePaymentMethod(self, request): 
-    #     stripe.api_key = settings.STRIPE_SECRET_KEY
-    #     params = helpers.getRequestParams(request)
-
-    #     try:
-    #         resp = stripe.PaymentMethod.attach(
-    #             params["paymentMethodId"],
-    #             customer=params["managerId"],
-    #         )
-    #         stripe.Customer.modify(
-    #             params["managerId"],
-    #             invoice_settings=
-    #             {
-    #                 "default_payment_method": params["paymentMethodId"]
-    #             },
-    #         )
-    #     except Exception as e: 
-    #         print(e)
-    #         return helpers.getBadResponse("There was an error in adding card details. Please try again later.", 500)
-        
-    #     managerObject = Manager.objects.get(id=params["managerId"])
-    #     paymentMethodObject = PaymentMethod.objects.get(id=params["paymentMethodId"])
-    #     managerObject.cardDetails = paymentMethodObject
-    #     managerObject.save()
-
-    #     return HttpResponse(
-    #         json.dumps(
-    #             {
-    #                 "Message": "Updated card details successfully",
-    #                 "manager": resp
-    #             }
-    #         ),
-    #         content_type="application/json"
-    #     )
-
-    # @decorators.validateRequestContentType
-    # @decorators.validateIfAuthTokenPresent
-    # @decorators.checkIfTokenExists
-    # @decorators.checkIfPaymentIdPresent
-    # @decorators.checkIfPaymentMethodExists
-    # def removePaymentMethod(self, request): 
-    #     stripe.api_key = settings.STRIPE_SECRET_KEY
-    #     params = helpers.getRequestParams(request)
-    #     try: 
-    #         resp = stripe.PaymentMethod.detach(
-    #             params["paymentMethodId"]
-    #         )
-    #     except Exception as e: 
-    #         print(e)
-    #         return helpers.getBadResponse("")
-
-    #     paymentMethod = PaymentMethod.objects.get(id=params["paymentMethodId"]).delete()
-    #     return HttpResponse(
-    #         json.dumps(
-    #             {
-    #                 "message": "Removed Card Details Successfully",
-    #                 "details": resp
-    #             }
-    #         ),
-    #         content_type="application/json"
-    #     )
-
-    # def getAllPaymentMethods(self, request, managerId): 
-    #     stripe.api_key = settings.STRIPE_SECRET_KEY
-    #     try: 
-    #         resp = stripe.PaymentMethod.list(
-    #             customer=managerId,
-    #             type="card",
-    #         )
-    #         print(resp)
-    #     except Exception as e: 
-    #         print(e)
-    #         return helpers.getBadResponse("There was an error while getting payment methods. Please try again later", 500)
-
-    #     return HttpResponse(
-    #         json.dumps(resp),
-    #         content_type="application/json"
-    #     )
-
-    # @decorators.validateRequestContentType
-    # @decorators.validateHttpMethod
-    # @decorators.validateIfAuthTokenPresent
-    # @decorators.checkIfTokenExists
-    # @decorators.validateFieldsForPaymentMethod
-    # @decorators.checkIfPaymentIdPresent
-    # @decorators.checkIfManagerExists
-    # def addDefaultPaymentMethod(self, request):
-    #     params = helpers.getRequestParams(request) 
-    #     stripe.api_key = settings.STRIPE_SECRET_KEY
-    #     try: 
-    #         resp = stripe.Customer.modify(
-    #             params["managerId"],
-    #             invoice_settings=
-    #             {
-    #                 "default_payment_method": params["paymentMethodId"]
-    #             },
-    #         )
-    #     except Exception as e: 
-    #         print(e)
-    #         return helpers.getBadResponse(str(e), 500)
-    #     return HttpResponse(
-    #         json.dumps(resp),
-    #         content_type="application/json"
-    #     )
-
     @decorators.checkIfGETMethod
     @decorators.validateIfAuthTokenPresent
     @decorators.checkIfTokenExists
@@ -204,8 +83,6 @@ class ManagerView(View):
         token = helpers.getTokenFromRequest(request) 
         authenticationUtils = AuthenticationUtils()
         managerObject = authenticationUtils.getUserByToken(token)
-        print(managerObject, '11111111111111111')
-        print(managerObject.id, "1222222222222222222")
         return HttpResponse(
             json.dumps(
                 helpers.getManagetDict(vars(managerObject), "Ok")
@@ -289,3 +166,33 @@ class ManagerRetreivePaymentMethod(ModelMixin, PermissionMixin, generics.Retriev
     """
     queryset = Manager.objects.all()
     serializer_class = ManagerGetPaymentMethodSerializer
+
+class ManagerRemoveCardDetailsView(PermissionMixin, generics.DestroyAPIView):
+    """
+    View class for DELETE for Manager's payment method
+
+    Args:
+        generics (Class): Generic API Class
+    """
+    queryset = Manager.objects.all()
+
+    def delete(self, request, paymentMethodId): 
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        try: 
+            resp = stripe.PaymentMethod.detach(
+                paymentMethodId
+            )
+        except Exception as e: 
+            print(e)
+            return helpers.getBadResponse("")
+
+        paymentMethod = PaymentMethod.objects.get(id=paymentMethodId).delete()
+        return HttpResponse(
+            json.dumps(
+                {
+                    "message": "Removed Card Details Successfully",
+                    "details": resp
+                }
+            ),
+            content_type="application/json"
+        )
