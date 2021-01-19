@@ -19,7 +19,7 @@ from backend.Views.manager_view import ManagerView, ManagerListCreateView, Manag
 from backend.Views.product_view import ProductView, ProductListCreateView, ProductRetreiveDestroyView
 from backend.Views.price_view import PriceView, PriceListCreateView, PriceRetreiveDestroyView
 from backend.Views.subscription_view import SubscriptionView, SubscriptionListCreateView, SubscriptionRetreiveDestroyView, SubscriptionListAPIView
-from backend.Views.payment_method_view import PaymentMethodView, PaymentListCreateView, PaymentRetreiveDestroyView
+from backend.Views.payment_method_view import PaymentMethodView, PaymentListCreateView, PaymentRetreiveDestroyView, PaymentIntentCreateView, SetupPaymentIntentView
 
 managerView = ManagerView()
 productView = ProductView()
@@ -56,13 +56,13 @@ urlpatterns = [
     path("payment_method/<str:id>/", PaymentRetreiveDestroyView.as_view()),
     path("payment_method/create/", paymentView.createPaymentMethod),
     path("payment_method/get_card_details/<str:managerId>/", paymentView.getCardDetails),
-    path("payment_method/setup_intent/", paymentView.setupPaymentIntent),
-    path("payment_method/payment_intent/", paymentView.createPaymentIntent),
+    path("setup_intent/", SetupPaymentIntentView.as_view()),
+    path("payment_method/payment_intent/", PaymentIntentCreateView.as_view()),
 
     path("subscriptions/", SubscriptionListCreateView.as_view()),
     path("subscriptions/get_all/<str:customer_id>/", SubscriptionListAPIView.as_view()),
     path("subscriptions/<str:id>/", SubscriptionRetreiveDestroyView.as_view()),
-    path("subscriptions/create/", subsView.createSubscription),
+    path("subscriptions/create/", SubscriptionListCreateView.as_view()),
     path("subscriptions/get_available/<str:managerId>/", subsView.getAvailableSubscriptionsAndPrice),
     path("subscriptions/delete/<str:id>/", SubscriptionRetreiveDestroyView.as_view())
 
