@@ -11,27 +11,27 @@ from ..Serializers.product_serializer import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
 from .mixin import ModelMixin, PermissionMixin
 
-class ProductView(View): 
+# class ProductView(View): 
 
-    @decorators.validateRequestContentType
-    @decorators.validateHttpMethod
-    @decorators.validateIfProductNamePresent
-    @decorators.validateIfProductNameAlreadyPresent
-    def createProduct(self, request): 
-        params = helpers.getRequestParams(request)
-        stripe.api_key = settings.STRIPE_SECRET_KEY 
-        try: 
-            resp = stripe.Product.create(
-                name= params["name"]
-            )
-            Product.objects.create(
-                id = resp["id"],
-                productName = resp["name"],
-                insertedAt = datetime.now()
-            )
-        except Exception as e: 
-            print(e)
-        return HttpResponse("Ok")
+#     @decorators.validateRequestContentType
+#     @decorators.validateHttpMethod
+#     @decorators.validateIfProductNamePresent
+#     @decorators.validateIfProductNameAlreadyPresent
+#     def createProduct(self, request): 
+#         params = helpers.getRequestParams(request)
+#         stripe.api_key = settings.STRIPE_SECRET_KEY 
+#         try: 
+#             resp = stripe.Product.create(
+#                 name= params["name"]
+#             )
+#             Product.objects.create(
+#                 id = resp["id"],
+#                 productName = resp["name"],
+#                 insertedAt = datetime.now()
+#             )
+#         except Exception as e: 
+#             print(e)
+#         return HttpResponse("Ok")
 
 
 class ProductListCreateView(PermissionMixin, generics.ListCreateAPIView):
